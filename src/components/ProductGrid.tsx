@@ -2,14 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import ProductCard from './ProductCard';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  category: string;
-}
+import { Product } from '@/services/productService';
 
 interface ProductGridProps {
   products: Product[];
@@ -25,7 +18,7 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
           id={product.id}
           name={product.name}
           price={product.price}
-          image={product.image}
+          image={product.images[0]} // Use the first image from the images array
           category={product.category}
         />
       ))}
