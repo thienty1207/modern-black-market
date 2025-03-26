@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 
 const Hero = () => {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -37,6 +37,10 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, [slides.length]);
 
+  const scrollToProducts = () => {
+    document.getElementById('featured-products')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="relative h-screen overflow-hidden">
       {/* Background slides */}
@@ -48,7 +52,7 @@ const Hero = () => {
             activeSlide === index ? "opacity-100" : "opacity-0"
           )}
         >
-          <div className="absolute inset-0 bg-black/60 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-background z-10" />
           <img 
             src={slide.image} 
             alt={slide.title} 
@@ -72,20 +76,20 @@ const Hero = () => {
             <div className="inline-block mb-4 px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20">
               <span className="text-xs font-medium text-accent-foreground">New Collection</span>
             </div>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold mb-6 tracking-tight text-gradient">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6 tracking-tight text-gradient">
               {slide.title}
             </h1>
             <p className="text-lg md:text-xl mb-8 text-muted-foreground max-w-xl mx-auto">
               {slide.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button asChild size="lg" className="rounded-full">
+              <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all">
                 <Link to={`/products/${slide.category}`}>
                   Shop Now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full">
+              <Button asChild variant="outline" size="lg" className="rounded-full border-white/20 hover:bg-white/10">
                 <Link to="/products">
                   Explore All
                 </Link>
@@ -102,12 +106,24 @@ const Hero = () => {
               className={cn(
                 "w-2 h-2 rounded-full transition-all",
                 activeSlide === index 
-                  ? "bg-white w-6" 
-                  : "bg-white/50"
+                  ? "bg-white w-8" 
+                  : "bg-white/50 hover:bg-white/80"
               )}
               onClick={() => setActiveSlide(index)}
+              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
+        </div>
+        
+        {/* Scroll down indicator */}
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block">
+          <button 
+            onClick={scrollToProducts}
+            className="text-white/70 hover:text-white transition-colors"
+            aria-label="Scroll to products"
+          >
+            <ChevronDown className="h-6 w-6" />
+          </button>
         </div>
       </div>
     </div>

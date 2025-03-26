@@ -3,7 +3,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import { Toaster as Sonner } from 'sonner';
+import { Toaster } from 'sonner';
 
 const Layout = () => {
   return (
@@ -13,7 +13,18 @@ const Layout = () => {
         <Outlet />
       </main>
       <Footer />
-      <Sonner position="bottom-right" />
+      <Toaster 
+        position="bottom-right" 
+        toastOptions={{
+          className: "neo-blur",
+          duration: 3000,
+          style: {
+            background: 'rgba(23, 23, 23, 0.9)',
+            color: 'white',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }
+        }}
+      />
     </div>
   );
 };

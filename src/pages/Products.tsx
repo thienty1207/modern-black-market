@@ -4,6 +4,11 @@ import { useParams } from 'react-router-dom';
 import ProductGrid from '@/components/ProductGrid';
 import { getProducts, getProductsByCategory, Product } from '@/services/productService';
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Search, SlidersHorizontal } from 'lucide-react';
 
 const Categories = [
   { id: 'all', name: 'All Products' },
@@ -15,8 +20,12 @@ const Categories = [
 const Products = () => {
   const { category } = useParams<{ category?: string }>();
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState(category || 'all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
     if (category) {
@@ -35,6 +44,7 @@ const Products = () => {
           fetchedProducts = await getProductsByCategory(activeCategory);
         }
         setProducts(fetchedProducts);
+        setFilteredProducts(fetchedProducts);
       } catch (error) {
         console.error('Failed to load products:', error);
       } finally {
@@ -45,8 +55,24 @@ const Products = () => {
     loadProducts();
   }, [activeCategory]);
 
+  useEffect(() => {
+    // Apply filters when products, searchTerm, or priceRange changes
+    const filtered = products.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           product.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+      
+      return matchesSearch && matchesPrice;
+    });
+    
+    setFilteredProducts(filtered);
+  }, [products, searchTerm, priceRange]);
+
   const handleCategoryChange = (categoryId: string) => {
     setActiveCategory(categoryId);
+    // Reset filters when changing category
+    setSearchTerm('');
+    setPriceRange([0, 5000]);
   };
 
   const getCategoryTitle = () => {
@@ -54,10 +80,23 @@ const Products = () => {
     return categoryObj ? categoryObj.name : 'Products';
   };
 
+  const handlePriceChange = (value: number[]) => {
+    setPriceRange(value);
+  };
+
+  const toggleFilter = () => {
+    setIsFilterOpen(!isFilterOpen);
+  };
+
   return (
     <div className="pt-24 pb-20 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4">
             <span className="text-xs font-medium text-accent-foreground">Our Collection</span>
           </div>
@@ -67,31 +106,75 @@ const Products = () => {
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Explore our curated selection of premium tech products, designed with precision and built for excellence.
           </p>
+        </motion.div>
+        
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          {Categories.map((cat, index) => (
+            <motion.div
+              key={cat.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <Button
+                variant={activeCategory === cat.id ? "default" : "outline"}
+                onClick={() => handleCategoryChange(cat.id)}
+                className="rounded-full transition-all"
+              >
+                {cat.name}
+              </Button>
+            </motion.div>
+          ))}
         </div>
         
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {Categories.map(cat => (
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <div className="relative w-full md:w-1/3">
+              <Input
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white/5 border-white/20 focus-visible:ring-accent"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            </div>
+            
             <Button
-              key={cat.id}
-              variant={activeCategory === cat.id ? "default" : "outline"}
-              onClick={() => handleCategoryChange(cat.id)}
-              className="rounded-full"
+              variant="outline"
+              className="md:hidden w-full border-white/20"
+              onClick={toggleFilter}
             >
-              {cat.name}
+              <SlidersHorizontal className="mr-2 h-4 w-4" />
+              Filters
             </Button>
-          ))}
+            
+            <div className={`${isFilterOpen || window.innerWidth >= 768 ? 'block' : 'hidden'} w-full md:w-2/3 space-y-4 md:space-y-0 md:flex items-center gap-4`}>
+              <div className="flex-1">
+                <Label htmlFor="price-range" className="text-sm">Price Range: ${priceRange[0]} - ${priceRange[1]}</Label>
+                <Slider
+                  id="price-range"
+                  defaultValue={[0, 5000]}
+                  value={priceRange}
+                  max={5000}
+                  step={100}
+                  onValueChange={handlePriceChange}
+                  className="mt-2"
+                />
+              </div>
+            </div>
+          </div>
         </div>
         
         {isLoading ? (
           <div className="h-96 flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
           </div>
-        ) : products.length > 0 ? (
-          <ProductGrid products={products} />
+        ) : filteredProducts.length > 0 ? (
+          <ProductGrid products={filteredProducts} />
         ) : (
-          <div className="text-center py-20">
+          <div className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
             <h3 className="text-xl font-medium mb-2">No products found</h3>
-            <p className="text-muted-foreground">Try selecting a different category</p>
+            <p className="text-muted-foreground">Try adjusting your filters or selecting a different category</p>
           </div>
         )}
       </div>

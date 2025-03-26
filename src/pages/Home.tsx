@@ -6,6 +6,7 @@ import ProductGrid from '@/components/ProductGrid';
 import { getFeaturedProducts, Product } from '@/services/productService';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -65,9 +66,12 @@ const Home = () => {
         </div>
       </section>
       
-      <section className="py-20 px-4 md:px-8 bg-gradient-to-t from-zinc-950 to-zinc-900">
+      <section id="featured-products" className="py-20 px-4 md:px-8 bg-gradient-to-t from-zinc-950 to-zinc-900">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
+            <div className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4">
+              <span className="text-xs font-medium text-accent-foreground">Top Picks</span>
+            </div>
             <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient mb-4">
               Featured Products
             </h2>
@@ -84,9 +88,10 @@ const Home = () => {
             <>
               <ProductGrid products={featuredProducts} className="mb-12" />
               <div className="text-center">
-                <Button asChild size="lg" className="rounded-full">
-                  <Link to="/products">
+                <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all">
+                  <Link to="/products" className="group">
                     View All Products
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
               </div>
@@ -103,9 +108,10 @@ const Home = () => {
           <p className="text-muted-foreground text-lg mb-8">
             Join thousands of satisfied customers who have elevated their digital experience with our curated selection of premium tech products.
           </p>
-          <Button asChild size="lg" className="rounded-full">
-            <Link to="/products">
+          <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all">
+            <Link to="/products" className="group">
               Shop Now
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
