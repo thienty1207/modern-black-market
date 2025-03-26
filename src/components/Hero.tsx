@@ -83,14 +83,21 @@ const Hero = () => {
               {slide.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all">
-                <Link to={`/products/${slide.category}`}>
+              <Button
+                size="lg"
+                className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all w-full sm:w-auto"
+              >
+                <Link to={`/products/${slide.category}`} className="flex items-center justify-center w-full h-full">
                   Shop Now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full border-white/20 hover:bg-white/10">
-                <Link to="/products">
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-full border-white/20 hover:bg-white/10 w-full sm:w-auto"
+              >
+                <Link to="/products" className="flex items-center justify-center w-full h-full">
                   Explore All
                 </Link>
               </Button>
