@@ -31,9 +31,10 @@ const Hero = () => {
   ];
 
   useEffect(() => {
+    // Tăng tốc độ chuyển slide từ 6000ms xuống 4000ms
     const interval = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
+    }, 4000);
     
     return () => clearInterval(interval);
   }, [slides.length]);
@@ -49,7 +50,7 @@ const Hero = () => {
         <div
           key={index}
           className={cn(
-            "absolute inset-0 transition-opacity duration-1000",
+            "absolute inset-0 transition-opacity duration-700", // Tăng tốc độ transition
             activeSlide === index ? "opacity-100" : "opacity-0"
           )}
         >
@@ -57,7 +58,7 @@ const Hero = () => {
           <img 
             src={slide.image} 
             alt={slide.title} 
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transform scale-105 transition-transform duration-10000 hover:scale-100"
           />
         </div>
       ))}
@@ -68,51 +69,82 @@ const Hero = () => {
           <div
             key={index}
             className={cn(
-              "transition-all duration-700 absolute max-w-3xl px-4",
+              "transition-all duration-500", // Tăng tốc độ transition
               activeSlide === index 
                 ? "opacity-100 translate-y-0" 
-                : "opacity-0 translate-y-8"
+                : "opacity-0 translate-y-8",
+              "absolute max-w-3xl px-4"
             )}
           >
-            <div className="inline-block mb-4 px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20">
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={activeSlide === index ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="inline-block mb-4 px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20"
+            >
               <span className="text-xs font-medium text-accent-foreground">New Collection</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6 tracking-tight text-gradient">
+            </motion.div>
+            <motion.h1 
+              initial={{ y: 30, opacity: 0 }}
+              animate={activeSlide === index ? { y: 0, opacity: 1 } : { y: 30, opacity: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6 tracking-tight text-gradient"
+            >
               {slide.title}
-            </h1>
-            <p className="text-lg md:text-xl mb-8 text-muted-foreground max-w-xl mx-auto">
+            </motion.h1>
+            <motion.p 
+              initial={{ y: 40, opacity: 0 }}
+              animate={activeSlide === index ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-lg md:text-xl mb-8 text-muted-foreground max-w-xl mx-auto"
+            >
               {slide.subtitle}
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            </motion.p>
+            <motion.div 
+              initial={{ y: 50, opacity: 0 }}
+              animate={activeSlide === index ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            >
               <Button
                 size="lg"
-                className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all w-full sm:w-auto"
+                className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all w-full sm:w-auto group overflow-hidden relative"
                 asChild
               >
                 <Link to={`/products/${slide.category}`}>
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-accent to-accent/50 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
                   Shop Now
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <motion.span
+                    className="ml-2 inline-flex items-center"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ repeat: Infinity, repeatDelay: 2, duration: 1 }}
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                  </motion.span>
                 </Link>
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="rounded-full border-white/20 hover:bg-white/10 w-full sm:w-auto"
+                className="rounded-full border-white/20 hover:bg-white/10 w-full sm:w-auto group overflow-hidden relative"
                 asChild
               >
                 <Link to="/products">
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
                   Explore All
                 </Link>
               </Button>
-            </div>
+            </motion.div>
           </div>
         ))}
         
         {/* Slide indicators */}
         <div className="absolute bottom-10 flex space-x-2">
           {slides.map((_, index) => (
-            <button
+            <motion.button
               key={index}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
               className={cn(
                 "w-2 h-2 rounded-full transition-all",
                 activeSlide === index 
@@ -126,7 +158,17 @@ const Hero = () => {
         </div>
         
         {/* Scroll down indicator */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block">
+        <motion.div 
+          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 hidden md:block"
+          animate={{ 
+            y: [0, 6, 0],
+            opacity: [0.6, 1, 0.6]
+          }}
+          transition={{ 
+            repeat: Infinity, 
+            duration: 1.5 
+          }}
+        >
           <button 
             onClick={scrollToProducts}
             className="text-white/70 hover:text-white transition-colors"
@@ -134,7 +176,7 @@ const Hero = () => {
           >
             <ChevronDown className="h-6 w-6" />
           </button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
