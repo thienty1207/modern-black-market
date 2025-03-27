@@ -37,6 +37,7 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
   };
 
   // Pre-calculate all animation values outside of the render loop
+  // This prevents conditional hook calls which can cause the "Rendered fewer hooks than expected" error
   const animationProps = products.map((_, index) => {
     const column = index % (isMobile ? 2 : 4);
     const yOffset = (column % 2 === 0) ? 20 : -20;
@@ -65,10 +66,11 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
   return (
     <motion.div 
       ref={ref}
-      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6", className)}
+      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 relative", className)}
       variants={container}
       initial="hidden"
       animate={isInView ? "show" : "hidden"}
+      style={{ position: 'relative' }} // Add explicit position for scroll calculation
     >
       {products.map((product, index) => (
         <motion.div
