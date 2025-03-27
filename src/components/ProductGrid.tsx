@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import ProductCard from './ProductCard';
 import { Product } from '@/services/productService';
-import { motion, useInView, useScroll, MotionValue } from 'framer-motion';
+import { motion, useInView, useScroll } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProductGridProps {
@@ -20,7 +20,8 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
   
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"]
+    offset: ["start end", "end start"],
+    layoutEffect: false // Add this to prevent warning
   });
   
   const isMobile = useIsMobile();
@@ -37,13 +38,13 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
     }
   };
 
-  // Create simpler animation configs that don't rely on conditional useTransform hooks
+  // Create simpler animation configs once
   const [animationConfigs, setAnimationConfigs] = useState<Array<{
     column: number;
     yOffset: number;
   }>>([]);
 
-  // Create these animation configs once when the component mounts
+  // Create these animation configs once when the component mounts or products change
   useEffect(() => {
     if (products.length === 0) return;
     
@@ -57,21 +58,12 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
     setAnimationConfigs(configs);
   }, [products.length, isMobile]);
 
-  // If animation configs haven't been calculated yet, return a simple loading state
-  if (products.length > 0 && animationConfigs.length === 0) {
+  // Simplified rendering to avoid conditional hooks
+  if (products.length === 0) {
     return (
-      <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 relative", className)}>
-        {products.map((product) => (
-          <div key={product.id} className="opacity-0">
-            <ProductCard
-              id={product.id}
-              name={product.name}
-              price={product.price}
-              image={product.images[0]} 
-              category={product.category}
-            />
-          </div>
-        ))}
+      <div className="text-center py-12">
+        <h3 className="text-lg font-medium mb-2">No products found</h3>
+        <p className="text-muted-foreground">Try adjusting your filters or selecting a different category</p>
       </div>
     );
   }
@@ -79,26 +71,17 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
   return (
     <motion.div 
       ref={ref}
-      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6", className)}
+      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 relative", className)}
       variants={container}
       initial="hidden"
       animate={isInView ? "show" : "hidden"}
-      style={{ position: 'relative' }}
     >
       {products.map((product, index) => {
-        // Apply animation styles directly in the render loop
-        // This is fine since we're not calling hooks conditionally
         const config = animationConfigs[index] || { yOffset: 0 };
         
         return (
           <motion.div
             key={product.id}
-            style={{
-              // Use simpler animation approach without creating hooks in loops
-              y: scrollYProgress.get() * config.yOffset,
-              opacity: 1 - (0.4 * Math.abs(scrollYProgress.get() - 0.5)),
-              scale: 0.9 + (0.1 * (1 - Math.abs(scrollYProgress.get() - 0.5)))
-            }}
             whileHover={{ 
               scale: 1.05, 
               transition: { duration: 0.3 } 

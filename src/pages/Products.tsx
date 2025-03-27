@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ProductGrid from '@/components/ProductGrid';
@@ -43,6 +42,7 @@ const Products = () => {
         } else {
           fetchedProducts = await getProductsByCategory(activeCategory);
         }
+        console.log('Fetched products:', fetchedProducts);
         setProducts(fetchedProducts);
         setFilteredProducts(fetchedProducts);
       } catch (error) {
@@ -56,7 +56,9 @@ const Products = () => {
   }, [activeCategory]);
 
   useEffect(() => {
-    // Apply filters when products, searchTerm, or priceRange changes
+    console.log('Filtering products:', products.length);
+    if (products.length === 0) return;
+    
     const filtered = products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                            product.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -65,12 +67,12 @@ const Products = () => {
       return matchesSearch && matchesPrice;
     });
     
+    console.log('Filtered products:', filtered.length);
     setFilteredProducts(filtered);
   }, [products, searchTerm, priceRange]);
 
   const handleCategoryChange = (categoryId: string) => {
     setActiveCategory(categoryId);
-    // Reset filters when changing category
     setSearchTerm('');
     setPriceRange([0, 5000]);
   };
@@ -88,36 +90,32 @@ const Products = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.5 }
-    }
-  };
-
   return (
     <div className="pt-24 pb-20 px-4 md:px-8">
       <motion.div 
         className="max-w-7xl mx-auto"
-        variants={containerVariants}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { 
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
         initial="hidden"
         animate="visible"
       >
         <motion.div 
           className="text-center mb-12"
-          variants={itemVariants}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { 
+              opacity: 1, 
+              y: 0,
+              transition: { duration: 0.5 }
+            }
+          }}
         >
           <div className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4">
             <span className="text-xs font-medium text-accent-foreground">Our Collection</span>
@@ -132,7 +130,14 @@ const Products = () => {
         
         <motion.div 
           className="flex flex-wrap justify-center gap-3 mb-8"
-          variants={itemVariants}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { 
+              opacity: 1, 
+              y: 0,
+              transition: { duration: 0.5 }
+            }
+          }}
         >
           {Categories.map((cat, index) => (
             <motion.div
@@ -154,7 +159,14 @@ const Products = () => {
         
         <motion.div 
           className="mb-8"
-          variants={itemVariants}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { 
+              opacity: 1, 
+              y: 0,
+              transition: { duration: 0.5 }
+            }
+          }}
         >
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
             <div className="relative w-full md:w-1/3">
@@ -199,24 +211,22 @@ const Products = () => {
           </div>
         ) : filteredProducts.length > 0 ? (
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { 
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.05
-                }
-              }
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
           >
             <ProductGrid products={filteredProducts} />
           </motion.div>
         ) : (
           <motion.div
-            variants={itemVariants}
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { 
+                opacity: 1, 
+                y: 0,
+                transition: { duration: 0.5 }
+              }
+            }}
             className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
           >
             <h3 className="text-xl font-medium mb-2">No products found</h3>
