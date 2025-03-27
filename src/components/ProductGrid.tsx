@@ -1,9 +1,9 @@
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import ProductCard from './ProductCard';
 import { Product } from '@/services/productService';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView, useScroll, MotionValue } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProductGridProps {
@@ -37,47 +37,28 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
     }
   };
 
-  // Create a stable array of animation properties
-  const [animationProps, setAnimationProps] = useState<Array<{
-    y: any;
-    opacity: any;
-    scale: any;
+  // Create simpler animation configs that don't rely on conditional useTransform hooks
+  const [animationConfigs, setAnimationConfigs] = useState<Array<{
+    column: number;
+    yOffset: number;
   }>>([]);
 
-  // Calculate animation properties once when component mounts or dependencies change
+  // Create these animation configs once when the component mounts
   useEffect(() => {
     if (products.length === 0) return;
     
-    const newAnimationProps = products.map((_, index) => {
+    const configs = products.map((_, index) => {
       const column = index % (isMobile ? 2 : 4);
       const yOffset = (column % 2 === 0) ? 20 : -20;
       
-      const y = useTransform(
-        scrollYProgress, 
-        [0, 0.5, 1], 
-        [yOffset, 0, -yOffset]
-      );
-      
-      const opacity = useTransform(
-        scrollYProgress,
-        [0, 0.2, 0.8, 1],
-        [0.6, 1, 1, 0.6]
-      );
-      
-      const scale = useTransform(
-        scrollYProgress,
-        [0, 0.2, 0.8, 1],
-        [0.9, 1, 1, 0.9]
-      );
-
-      return { y, opacity, scale };
+      return { column, yOffset };
     });
     
-    setAnimationProps(newAnimationProps);
-  }, [products.length, isMobile, scrollYProgress]);
+    setAnimationConfigs(configs);
+  }, [products.length, isMobile]);
 
-  // If animation props haven't been calculated yet, return a simple loading state
-  if (products.length > 0 && animationProps.length === 0) {
+  // If animation configs haven't been calculated yet, return a simple loading state
+  if (products.length > 0 && animationConfigs.length === 0) {
     return (
       <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 relative", className)}>
         {products.map((product) => (
@@ -102,47 +83,58 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
       variants={container}
       initial="hidden"
       animate={isInView ? "show" : "hidden"}
-      style={{ position: 'relative' }} // Ensure correct position for scroll calculations
+      style={{ position: 'relative' }}
     >
-      {products.map((product, index) => (
-        <motion.div
-          key={product.id}
-          style={animationProps[index] || {}}
-          whileHover={{ 
-            scale: 1.05, 
-            transition: { duration: 0.3 } 
-          }}
-          variants={{
-            hidden: { 
-              opacity: 0, 
-              y: 30 
-            },
-            show: { 
-              opacity: 1, 
-              y: 0,
-              transition: {
-                duration: 0.5,
-                ease: [0.25, 0.1, 0.25, 1.0]
-              }
-            }
-          }}
-        >
+      {products.map((product, index) => {
+        // Apply animation styles directly in the render loop
+        // This is fine since we're not calling hooks conditionally
+        const config = animationConfigs[index] || { yOffset: 0 };
+        
+        return (
           <motion.div
-            whileHover={{ 
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)"
+            key={product.id}
+            style={{
+              // Use simpler animation approach without creating hooks in loops
+              y: scrollYProgress.get() * config.yOffset,
+              opacity: 1 - (0.4 * Math.abs(scrollYProgress.get() - 0.5)),
+              scale: 0.9 + (0.1 * (1 - Math.abs(scrollYProgress.get() - 0.5)))
             }}
-            transition={{ duration: 0.3 }}
+            whileHover={{ 
+              scale: 1.05, 
+              transition: { duration: 0.3 } 
+            }}
+            variants={{
+              hidden: { 
+                opacity: 0, 
+                y: 30 
+              },
+              show: { 
+                opacity: 1, 
+                y: 0,
+                transition: {
+                  duration: 0.5,
+                  ease: [0.25, 0.1, 0.25, 1.0]
+                }
+              }
+            }}
           >
-            <ProductCard
-              id={product.id}
-              name={product.name}
-              price={product.price}
-              image={product.images[0]} 
-              category={product.category}
-            />
+            <motion.div
+              whileHover={{ 
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)"
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <ProductCard
+                id={product.id}
+                name={product.name}
+                price={product.price}
+                image={product.images[0]} 
+                category={product.category}
+              />
+            </motion.div>
           </motion.div>
-        </motion.div>
-      ))}
+        );
+      })}
     </motion.div>
   );
 };
