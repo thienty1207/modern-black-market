@@ -88,14 +88,36 @@ const Products = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
   return (
     <div className="pt-24 pb-20 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
+      <motion.div 
+        className="max-w-7xl mx-auto"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <motion.div 
           className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          variants={itemVariants}
         >
           <div className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4">
             <span className="text-xs font-medium text-accent-foreground">Our Collection</span>
@@ -108,7 +130,10 @@ const Products = () => {
           </p>
         </motion.div>
         
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
+        <motion.div 
+          className="flex flex-wrap justify-center gap-3 mb-8"
+          variants={itemVariants}
+        >
           {Categories.map((cat, index) => (
             <motion.div
               key={cat.id}
@@ -125,9 +150,12 @@ const Products = () => {
               </Button>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
         
-        <div className="mb-8">
+        <motion.div 
+          className="mb-8"
+          variants={itemVariants}
+        >
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
             <div className="relative w-full md:w-1/3">
               <Input
@@ -163,21 +191,39 @@ const Products = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
         
         {isLoading ? (
           <div className="h-96 flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
           </div>
         ) : filteredProducts.length > 0 ? (
-          <ProductGrid products={filteredProducts} />
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { 
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.05
+                }
+              }
+            }}
+          >
+            <ProductGrid products={filteredProducts} />
+          </motion.div>
         ) : (
-          <div className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+          <motion.div
+            variants={itemVariants}
+            className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
+          >
             <h3 className="text-xl font-medium mb-2">No products found</h3>
             <p className="text-muted-foreground">Try adjusting your filters or selecting a different category</p>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -1,145 +1,220 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
-import { User, Settings, LogOut, ShoppingBag, Heart, CreditCard } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { motion } from 'framer-motion';
 
 const UserProfile = () => {
-  // Demo user data - in a real app, this would come from authentication
-  const user = {
-    name: 'Jane Doe',
-    email: 'jane.doe@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80',
-    joined: 'January 2023',
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
   };
-
-  const handleLogout = () => {
-    // In a real app, this would handle actual logout logic
-    toast.success('Logged out successfully');
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
   };
 
   return (
-    <div className="pt-32 pb-20 px-4 md:px-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* User sidebar */}
-          <Card className="bg-card/50 backdrop-blur-sm border border-white/10 lg:col-span-1">
-            <CardHeader className="items-center text-center pb-2">
-              <Avatar className="h-24 w-24 mb-2">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <CardTitle className="text-2xl font-display">{user.name}</CardTitle>
-              <CardDescription>{user.email}</CardDescription>
-              <p className="text-sm text-muted-foreground">Member since {user.joined}</p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 mt-4">
-                <Button variant="outline" className="w-full justify-start" size="lg">
-                  <User className="mr-2 h-4 w-4" />
-                  My Account
+    <motion.div 
+      className="pt-32 pb-20 px-4 md:px-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="max-w-5xl mx-auto">
+        <motion.div variants={itemVariants} className="text-center mb-12">
+          <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-gradient mb-6">
+            My Account
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Manage your profile, orders, and preferences
+          </p>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <Card className="md:col-span-1 bg-white/5 backdrop-blur-xl border border-white/10">
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center space-y-4">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80" alt="User" />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div className="text-center">
+                  <h2 className="text-xl font-medium">John Doe</h2>
+                  <p className="text-sm text-muted-foreground">john.doe@example.com</p>
+                </div>
+                <Button variant="outline" size="sm" className="w-full mt-4">
+                  Edit Profile
                 </Button>
-                <Button variant="outline" className="w-full justify-start" size="lg">
-                  <ShoppingBag className="mr-2 h-4 w-4" />
-                  Orders
-                </Button>
-                <Button variant="outline" className="w-full justify-start" size="lg">
-                  <Heart className="mr-2 h-4 w-4" />
-                  Wishlist
-                </Button>
-                <Button variant="outline" className="w-full justify-start" size="lg">
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Payment Methods
-                </Button>
-                <Button variant="outline" className="w-full justify-start" size="lg">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start text-destructive hover:text-destructive" 
-                  size="lg"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
+              </div>
+              
+              <div className="mt-8 space-y-2">
+                <div className="flex justify-between items-center py-2 border-b border-white/10">
+                  <span className="text-muted-foreground">Member since</span>
+                  <span>Jan 2023</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-white/10">
+                  <span className="text-muted-foreground">Orders</span>
+                  <span>12</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-white/10">
+                  <span className="text-muted-foreground">Wishlist items</span>
+                  <span>8</span>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* User main content */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="dashboard">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
-                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                <TabsTrigger value="orders">Recent Orders</TabsTrigger>
-                <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
+          <div className="md:col-span-2">
+            <Tabs defaultValue="account" className="w-full">
+              <TabsList className="w-full mb-8 grid grid-cols-3">
+                <TabsTrigger value="account">Account</TabsTrigger>
+                <TabsTrigger value="orders">Orders</TabsTrigger>
+                <TabsTrigger value="addresses">Addresses</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="dashboard">
-                <Card className="bg-card/50 backdrop-blur-sm border border-white/10">
+              <TabsContent value="account">
+                <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
                   <CardHeader>
-                    <CardTitle>Welcome back, {user.name}</CardTitle>
+                    <CardTitle>Account Information</CardTitle>
                     <CardDescription>
-                      Here's an overview of your account activity and status
+                      Update your account details and preferences
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                      <div className="bg-white/5 p-4 rounded-lg border border-white/10">
-                        <h3 className="font-medium mb-1">Total Orders</h3>
-                        <p className="text-3xl font-display">4</p>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input id="firstName" defaultValue="John" />
                       </div>
-                      <div className="bg-white/5 p-4 rounded-lg border border-white/10">
-                        <h3 className="font-medium mb-1">Wishlist Items</h3>
-                        <p className="text-3xl font-display">7</p>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input id="lastName" defaultValue="Doe" />
                       </div>
                     </div>
-                    
-                    <h3 className="font-medium text-lg mb-4">Recently Viewed</h3>
-                    <p className="text-muted-foreground">You haven't viewed any products yet.</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" type="email" defaultValue="john.doe@example.com" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone</Label>
+                      <Input id="phone" defaultValue="+1 234 567 890" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="currentPassword">Current Password</Label>
+                      <Input id="currentPassword" type="password" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="newPassword">New Password</Label>
+                        <Input id="newPassword" type="password" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirmPassword">Confirm Password</Label>
+                        <Input id="confirmPassword" type="password" />
+                      </div>
+                    </div>
                   </CardContent>
+                  <CardFooter>
+                    <Button className="rounded-full">Save Changes</Button>
+                  </CardFooter>
                 </Card>
               </TabsContent>
               
               <TabsContent value="orders">
-                <Card className="bg-card/50 backdrop-blur-sm border border-white/10">
+                <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
                   <CardHeader>
-                    <CardTitle>Your Orders</CardTitle>
+                    <CardTitle>Order History</CardTitle>
                     <CardDescription>
                       View and track your recent orders
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground mb-4">You haven't placed any orders yet.</p>
-                    <Button>Browse Products</Button>
+                    <div className="space-y-6">
+                      {[1, 2, 3].map((order) => (
+                        <div 
+                          key={order} 
+                          className="p-4 rounded-lg border border-white/10 hover:border-accent/30 transition-colors"
+                        >
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Order #{100000 + order}</span>
+                                <span className="px-2 py-1 text-xs rounded-full bg-accent/20 text-accent-foreground">
+                                  {order === 1 ? 'Delivered' : order === 2 ? 'Shipped' : 'Processing'}
+                                </span>
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                Placed on {order === 1 ? 'June 12, 2023' : order === 2 ? 'May 29, 2023' : 'April 15, 2023'}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="font-medium">${(order * 299).toFixed(2)}</p>
+                              <p className="text-sm text-muted-foreground mt-1">{order + 1} items</p>
+                            </div>
+                            <Button variant="outline" size="sm" className="mt-2 md:mt-0">
+                              View Order
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
               
-              <TabsContent value="wishlist">
-                <Card className="bg-card/50 backdrop-blur-sm border border-white/10">
+              <TabsContent value="addresses">
+                <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
                   <CardHeader>
-                    <CardTitle>Your Wishlist</CardTitle>
+                    <CardTitle>Saved Addresses</CardTitle>
                     <CardDescription>
-                      Products you've saved for later
+                      Manage your shipping and billing addresses
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">Your wishlist is empty.</p>
-                    <Button>Explore Products</Button>
+                  <CardContent className="space-y-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium">Default Address</h3>
+                        <div className="text-sm text-muted-foreground mt-2 space-y-1">
+                          <p>John Doe</p>
+                          <p>123 Main Street</p>
+                          <p>Apt 4B</p>
+                          <p>New York, NY 10001</p>
+                          <p>United States</p>
+                          <p>+1 234 567 890</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Button variant="outline" size="sm">Edit</Button>
+                        <Button variant="outline" size="sm" className="ml-2">Remove</Button>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4">
+                      <Button className="rounded-full">Add New Address</Button>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
             </Tabs>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

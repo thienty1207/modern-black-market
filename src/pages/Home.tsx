@@ -7,6 +7,7 @@ import { getFeaturedProducts, Product } from '@/services/productService';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -27,48 +28,99 @@ const Home = () => {
     loadProducts();
   }, []);
 
+  const fadeInUpVariants = {
+    hidden: { opacity: 0, y: 60 },
+    visible: (custom: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { 
+        duration: 0.7,
+        delay: custom * 0.1,
+        ease: "easeOut"
+      }
+    })
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Hero />
       
       <section className="py-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <motion.div 
+            className="text-center mb-12"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeInUpVariants}
+            custom={0}
+          >
             <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient mb-4">
               Featured Categories
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Explore our premium selection of cutting-edge tech products designed for performance and elegance.
             </p>
-          </div>
+          </motion.div>
           
-          <FeaturedCategory 
-            title="Premium Smartphones"
-            description="Discover our collection of cutting-edge smartphones featuring advanced cameras, stunning displays, and all-day battery life."
-            image="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
-            link="/products/phones"
-          />
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeInUpVariants}
+            custom={1}
+          >
+            <FeaturedCategory 
+              title="Premium Smartphones"
+              description="Discover our collection of cutting-edge smartphones featuring advanced cameras, stunning displays, and all-day battery life."
+              image="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+              link="/products/phones"
+            />
+          </motion.div>
           
-          <FeaturedCategory 
-            title="High-Performance Laptops"
-            description="Unleash your potential with our range of powerful laptops designed for creators, gamers, and professionals alike."
-            image="https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
-            link="/products/laptops"
-            reverse
-          />
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeInUpVariants}
+            custom={2}
+          >
+            <FeaturedCategory 
+              title="High-Performance Laptops"
+              description="Unleash your potential with our range of powerful laptops designed for creators, gamers, and professionals alike."
+              image="https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+              link="/products/laptops"
+              reverse
+            />
+          </motion.div>
           
-          <FeaturedCategory 
-            title="Professional Cameras"
-            description="Capture life's moments with exceptional clarity and detail using our professional-grade cameras and equipment."
-            image="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
-            link="/products/cameras"
-          />
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeInUpVariants}
+            custom={3}
+          >
+            <FeaturedCategory 
+              title="Professional Cameras"
+              description="Capture life's moments with exceptional clarity and detail using our professional-grade cameras and equipment."
+              image="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+              link="/products/cameras"
+            />
+          </motion.div>
         </div>
       </section>
       
       <section id="featured-products" className="py-20 px-4 md:px-8 bg-gradient-to-t from-zinc-950 to-zinc-900">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <motion.div 
+            className="text-center mb-12"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeInUpVariants}
+            custom={0}
+          >
             <div className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4">
               <span className="text-xs font-medium text-accent-foreground">Top Picks</span>
             </div>
@@ -78,7 +130,7 @@ const Home = () => {
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Explore our selection of premium tech products, crafted with precision and designed for excellence.
             </p>
-          </div>
+          </motion.div>
           
           {isLoading ? (
             <div className="h-96 flex items-center justify-center">
@@ -86,22 +138,44 @@ const Home = () => {
             </div>
           ) : (
             <>
-              <ProductGrid products={featuredProducts} className="mb-12" />
-              <div className="text-center">
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={fadeInUpVariants}
+                custom={1}
+              >
+                <ProductGrid products={featuredProducts} className="mb-12" />
+              </motion.div>
+              <motion.div 
+                className="text-center"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={fadeInUpVariants}
+                custom={2}
+              >
                 <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all">
                   <Link to="/products" className="group">
                     View All Products
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
-              </div>
+              </motion.div>
             </>
           )}
         </div>
       </section>
       
       <section className="py-20 px-4 md:px-8 glass-morphism">
-        <div className="max-w-3xl mx-auto text-center">
+        <motion.div 
+          className="max-w-3xl mx-auto text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={fadeInUpVariants}
+          custom={0}
+        >
           <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient mb-6">
             Experience Premium Technology
           </h2>
@@ -114,7 +188,7 @@ const Home = () => {
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
-        </div>
+        </motion.div>
       </section>
     </div>
   );

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface FeaturedCategoryProps {
   title: string;
@@ -22,6 +23,24 @@ const FeaturedCategory = ({
   reverse = false,
   className 
 }: FeaturedCategoryProps) => {
+  const contentVariants = {
+    hidden: { opacity: 0, x: reverse ? 50 : -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, x: reverse ? -50 : 50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.6, ease: "easeOut", delay: 0.2 }
+    }
+  };
+
   return (
     <div 
       className={cn(
@@ -29,7 +48,10 @@ const FeaturedCategory = ({
         className
       )}
     >
-      <div className={cn("order-2", reverse ? "lg:order-2" : "lg:order-1")}>
+      <motion.div 
+        className={cn("order-2", reverse ? "lg:order-2" : "lg:order-1")}
+        variants={contentVariants}
+      >
         <div className="space-y-6 max-w-lg mx-auto lg:mx-0">
           <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient">
             {title}
@@ -44,12 +66,15 @@ const FeaturedCategory = ({
             </Link>
           </Button>
         </div>
-      </div>
+      </motion.div>
       
-      <div className={cn(
-        "order-1 flex items-center justify-center",
-        reverse ? "lg:order-1" : "lg:order-2"
-      )}>
+      <motion.div 
+        className={cn(
+          "order-1 flex items-center justify-center",
+          reverse ? "lg:order-1" : "lg:order-2"
+        )}
+        variants={imageVariants}
+      >
         <div className="relative">
           <div className="w-full aspect-square rounded-2xl overflow-hidden border border-white/10">
             <img 
@@ -63,7 +88,7 @@ const FeaturedCategory = ({
           <div className="absolute -bottom-6 -right-6 w-full h-full border border-accent/20 rounded-2xl" />
           <div className="absolute -top-6 -left-6 w-24 h-24 bg-accent/10 backdrop-blur-xl rounded-full animate-float" />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronDown } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Hero = () => {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -86,8 +87,9 @@ const Hero = () => {
               <Button
                 size="lg"
                 className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all w-full sm:w-auto"
+                asChild
               >
-                <Link to={`/products/${slide.category}`} className="flex items-center justify-center w-full h-full">
+                <Link to={`/products/${slide.category}`}>
                   Shop Now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -96,8 +98,9 @@ const Hero = () => {
                 variant="outline"
                 size="lg"
                 className="rounded-full border-white/20 hover:bg-white/10 w-full sm:w-auto"
+                asChild
               >
-                <Link to="/products" className="flex items-center justify-center w-full h-full">
+                <Link to="/products">
                   Explore All
                 </Link>
               </Button>

@@ -68,14 +68,36 @@ const Search = () => {
     setFilteredProducts([]);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
   return (
     <div className="pt-32 pb-20 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
+      <motion.div 
+        className="max-w-7xl mx-auto"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <motion.div 
           className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          variants={itemVariants}
         >
           <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-gradient mb-6">
             Search Products
@@ -116,26 +138,38 @@ const Search = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
           </div>
         ) : filteredProducts.length > 0 ? (
-          <>
-            <div className="mb-6">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div variants={itemVariants} className="mb-6">
               <h2 className="text-xl font-medium">
                 {filteredProducts.length} {filteredProducts.length === 1 ? 'result' : 'results'} for "{initialQuery}"
               </h2>
-            </div>
-            <ProductGrid products={filteredProducts} />
-          </>
+            </motion.div>
+            <motion.div variants={itemVariants}>
+              <ProductGrid products={filteredProducts} />
+            </motion.div>
+          </motion.div>
         ) : initialQuery ? (
-          <div className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+          <motion.div
+            variants={itemVariants}
+            className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
+          >
             <h3 className="text-xl font-medium mb-2">No products found</h3>
             <p className="text-muted-foreground">Try a different search term</p>
-          </div>
+          </motion.div>
         ) : (
-          <div className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+          <motion.div
+            variants={itemVariants}
+            className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
+          >
             <h3 className="text-xl font-medium mb-2">Start searching</h3>
             <p className="text-muted-foreground">Enter a term to search our products</p>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

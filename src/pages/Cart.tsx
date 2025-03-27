@@ -1,219 +1,254 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, Trash2, Plus, Minus, CreditCard, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// Demo cart items - in a real app these would come from a cart context/state
-const initialCartItems = [
+// Sample cart data
+const initialCart = [
   {
     id: 1,
-    name: 'iPhone 14 Pro Max',
-    price: 1099,
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=180&q=80',
+    name: "Premium Smartphone X",
+    price: 899,
+    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
     quantity: 1
   },
   {
     id: 2,
-    name: 'MacBook Pro 16"',
-    price: 2499,
-    image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=180&q=80',
+    name: "Wireless Earbuds Pro",
+    price: 199,
+    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
     quantity: 1
   }
 ];
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
-  
-  const updateQuantity = (id: number, change: number) => {
-    setCartItems(items => 
-      items.map(item => 
-        item.id === id 
-          ? { ...item, quantity: Math.max(1, item.quantity + change) } 
-          : item
-      )
-    );
+  const [cart, setCart] = useState(initialCart);
+  const [promoCode, setPromoCode] = useState('');
+  const [discount, setDiscount] = useState(0);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
   };
   
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
+  const updateQuantity = (id: number, change: number) => {
+    setCart(cart.map(item => 
+      item.id === id 
+        ? { ...item, quantity: Math.max(1, item.quantity + change) } 
+        : item
+    ));
+  };
+
   const removeItem = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
+    setCart(cart.filter(item => item.id !== id));
     toast.success('Item removed from cart');
   };
-  
-  const clearCart = () => {
-    setCartItems([]);
-    toast.success('Cart cleared');
-  };
-  
-  const checkout = () => {
-    toast.success('Checkout process started');
-    // In a real app, this would navigate to a checkout page or process
-  };
-  
-  const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  };
-  
-  const subtotal = calculateSubtotal();
-  const shipping = subtotal > 0 ? 15 : 0;
-  const tax = subtotal * 0.07; // 7% tax
-  const total = subtotal + shipping + tax;
 
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  const applyPromo = () => {
+    if (promoCode.toLowerCase() === 'save10') {
+      setDiscount(10);
+      toast.success('Promo code applied!', {
+        description: '10% discount has been applied to your order.',
+      });
+    } else {
+      toast.error('Invalid promo code', {
+        description: 'Please enter a valid promo code.',
+      });
+    }
   };
+
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const discountAmount = subtotal * (discount / 100);
+  const total = subtotal - discountAmount;
+
+  const checkout = () => {
+    toast.success('Order placed successfully!', {
+      description: 'Your order has been placed and will be processed soon.',
+    });
+  };
+
+  if (cart.length === 0) {
+    return (
+      <motion.div 
+        className="pt-32 pb-20 px-4 md:px-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="max-w-4xl mx-auto text-center">
+          <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground mb-6" />
+          <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient mb-6">
+            Your Cart is Empty
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
+            Looks like you haven't added any products to your cart yet.
+          </p>
+          <Button asChild size="lg" className="rounded-full">
+            <Link to="/products">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Continue Shopping
+            </Link>
+          </Button>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
-    <div className="pt-32 pb-20 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
-        <motion.div 
-          className="text-center mb-12"
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-        >
-          <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-gradient mb-6">
-            Your Shopping Cart
+    <motion.div 
+      className="pt-32 pb-20 px-4 md:px-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="max-w-6xl mx-auto">
+        <motion.div variants={itemVariants} className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient">
+            Your Cart
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Review your items and proceed to checkout
-          </p>
+          <Button variant="ghost" size="sm" asChild className="hover:bg-white/5">
+            <Link to="/products">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Continue Shopping
+            </Link>
+          </Button>
         </motion.div>
-        
-        {cartItems.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-6">
-              {cartItems.map((item, index) => (
-                <motion.div 
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <Card className="bg-card/50 backdrop-blur-sm border border-white/10">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-4">
-                        <img 
-                          src={item.image} 
-                          alt={item.name} 
-                          className="h-24 w-24 object-cover rounded-lg"
-                        />
-                        <div className="flex-1">
-                          <h3 className="font-medium text-lg">{item.name}</h3>
-                          <p className="text-muted-foreground">${item.price.toFixed(2)}</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="icon"
-                            onClick={() => updateQuantity(item.id, -1)}
-                            disabled={item.quantity <= 1}
-                            className="h-8 w-8"
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="w-8 text-center">{item.quantity}</span>
-                          <Button 
-                            variant="outline" 
-                            size="icon"
-                            onClick={() => updateQuantity(item.id, 1)}
-                            className="h-8 w-8"
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        <div className="text-right min-w-[80px]">
-                          <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={() => removeItem(item.id)}
-                          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            {cart.map((item, index) => (
+              <motion.div
+                key={item.id}
+                variants={itemVariants}
+                custom={index}
+                className="flex flex-col md:flex-row gap-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4"
+              >
+                <div className="w-full md:w-1/4">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div className="flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-medium text-lg mb-2">{item.name}</h3>
+                    <p className="text-2xl font-bold">${item.price.toLocaleString()}</p>
+                  </div>
+                  
+                  <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
+                    <div className="flex items-center border border-white/20 rounded-full">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="rounded-full h-8 w-8"
+                        onClick={() => updateQuantity(item.id, -1)}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <span className="w-8 text-center">{item.quantity}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="rounded-full h-8 w-8"
+                        onClick={() => updateQuantity(item.id, 1)}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-red-500 hover:text-red-400 hover:bg-red-500/10 -mr-2"
+                      onClick={() => removeItem(item.id)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div 
+            variants={itemVariants}
+            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 h-fit sticky top-24"
+          >
+            <h2 className="text-xl font-medium mb-4">Order Summary</h2>
+            
+            <div className="space-y-3 mb-6">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span>${subtotal.toLocaleString()}</span>
+              </div>
               
-              <div className="flex justify-end">
-                <Button 
-                  variant="outline" 
-                  onClick={clearCart}
-                  className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  Clear Cart
-                </Button>
+              {discount > 0 && (
+                <div className="flex justify-between text-accent">
+                  <span>Discount ({discount}%)</span>
+                  <span>-${discountAmount.toLocaleString()}</span>
+                </div>
+              )}
+              
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Shipping</span>
+                <span>Free</span>
+              </div>
+              
+              <Separator className="bg-white/10 my-4" />
+              
+              <div className="flex justify-between text-lg font-bold">
+                <span>Total</span>
+                <span>${total.toLocaleString()}</span>
               </div>
             </div>
             
-            {/* Order Summary */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Card className="bg-card/50 backdrop-blur-sm border border-white/10">
-                <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span>${shipping.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tax (7%)</span>
-                    <span>${tax.toFixed(2)}</span>
-                  </div>
-                  <Separator className="my-2" />
-                  <div className="flex justify-between font-medium text-lg">
-                    <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full" onClick={checkout}>
-                    Proceed to Checkout
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            </motion.div>
-          </div>
-        ) : (
-          <motion.div
-            className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <ShoppingBag className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-2xl font-medium mb-2">Your cart is empty</h3>
-            <p className="text-muted-foreground mb-6">Looks like you haven't added any products to your cart yet.</p>
-            <Button asChild size="lg" className="rounded-full">
-              <Link to="/products">
-                Start Shopping
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Input 
+                  placeholder="Promo code" 
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  className="bg-transparent border-white/20"
+                />
+                <Button variant="outline" onClick={applyPromo}>Apply</Button>
+              </div>
+              
+              <Button 
+                size="lg" 
+                className="w-full rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all"
+                onClick={checkout}
+              >
+                <CreditCard className="mr-2 h-4 w-4" />
+                Checkout
+              </Button>
+              
+              <div className="text-xs text-center text-muted-foreground mt-4">
+                <p>Secure checkout powered by Stripe</p>
+                <p className="mt-1">Free shipping on all orders</p>
+              </div>
+            </div>
           </motion.div>
-        )}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
