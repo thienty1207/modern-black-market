@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import ProductCard from './ProductCard';
 import { Product } from '@/services/productService';
@@ -25,6 +25,7 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
   
   const isMobile = useIsMobile();
   
+  // Define animation constants
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -36,46 +37,77 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
     }
   };
 
-  // Pre-calculate all animation values outside of the render loop
-  // This prevents conditional hook calls which can cause the "Rendered fewer hooks than expected" error
-  const animationProps = products.map((_, index) => {
-    const column = index % (isMobile ? 2 : 4);
-    const yOffset = (column % 2 === 0) ? 20 : -20;
-    
-    const y = useTransform(
-      scrollYProgress, 
-      [0, 0.5, 1], 
-      [yOffset, 0, -yOffset]
-    );
-    
-    const opacity = useTransform(
-      scrollYProgress,
-      [0, 0.2, 0.8, 1],
-      [0.6, 1, 1, 0.6]
-    );
-    
-    const scale = useTransform(
-      scrollYProgress,
-      [0, 0.2, 0.8, 1],
-      [0.9, 1, 1, 0.9]
-    );
+  // Create a stable array of animation properties
+  const [animationProps, setAnimationProps] = useState<Array<{
+    y: any;
+    opacity: any;
+    scale: any;
+  }>>([]);
 
-    return { y, opacity, scale };
-  });
+  // Calculate animation properties once when component mounts or dependencies change
+  useEffect(() => {
+    if (products.length === 0) return;
+    
+    const newAnimationProps = products.map((_, index) => {
+      const column = index % (isMobile ? 2 : 4);
+      const yOffset = (column % 2 === 0) ? 20 : -20;
+      
+      const y = useTransform(
+        scrollYProgress, 
+        [0, 0.5, 1], 
+        [yOffset, 0, -yOffset]
+      );
+      
+      const opacity = useTransform(
+        scrollYProgress,
+        [0, 0.2, 0.8, 1],
+        [0.6, 1, 1, 0.6]
+      );
+      
+      const scale = useTransform(
+        scrollYProgress,
+        [0, 0.2, 0.8, 1],
+        [0.9, 1, 1, 0.9]
+      );
+
+      return { y, opacity, scale };
+    });
+    
+    setAnimationProps(newAnimationProps);
+  }, [products.length, isMobile, scrollYProgress]);
+
+  // If animation props haven't been calculated yet, return a simple loading state
+  if (products.length > 0 && animationProps.length === 0) {
+    return (
+      <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 relative", className)}>
+        {products.map((product) => (
+          <div key={product.id} className="opacity-0">
+            <ProductCard
+              id={product.id}
+              name={product.name}
+              price={product.price}
+              image={product.images[0]} 
+              category={product.category}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <motion.div 
       ref={ref}
-      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 relative", className)}
+      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6", className)}
       variants={container}
       initial="hidden"
       animate={isInView ? "show" : "hidden"}
-      style={{ position: 'relative' }} // Add explicit position for scroll calculation
+      style={{ position: 'relative' }} // Ensure correct position for scroll calculations
     >
       {products.map((product, index) => (
         <motion.div
           key={product.id}
-          style={animationProps[index]}
+          style={animationProps[index] || {}}
           whileHover={{ 
             scale: 1.05, 
             transition: { duration: 0.3 } 
