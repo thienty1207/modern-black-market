@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Eye } from 'lucide-react';
+import { ShoppingCart, Eye, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProductCardProps {
@@ -16,12 +16,63 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ id, name, price, image, category, className }: ProductCardProps) => {
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  
+  // Kiểm tra xem sản phẩm có trong wishlist không khi component mount
+  useEffect(() => {
+    const savedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    setIsInWishlist(savedWishlist.includes(id));
+  }, [id]);
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Thêm sản phẩm vào giỏ hàng (giả lập)
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existingItem = cart.find((item: any) => item.id === id);
+    
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.push({ 
+        id, 
+        name, 
+        price, 
+        image, 
+        category, 
+        quantity: 1 
+      });
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
     toast.success('Added to cart', {
       description: `${name} has been added to your cart.`,
     });
+  };
+  
+  const toggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const savedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    let newWishlist;
+    
+    if (isInWishlist) {
+      // Xóa khỏi wishlist
+      newWishlist = savedWishlist.filter((itemId: number) => itemId !== id);
+      toast.success('Removed from wishlist');
+    } else {
+      // Thêm vào wishlist
+      newWishlist = [...savedWishlist, id];
+      toast.success('Added to wishlist', {
+        description: `${name} has been added to your wishlist.`,
+      });
+    }
+    
+    localStorage.setItem('wishlist', JSON.stringify(newWishlist));
+    setIsInWishlist(!isInWishlist);
   };
 
   return (
@@ -51,6 +102,20 @@ const ProductCard = ({ id, name, price, image, category, className }: ProductCar
           </div>
         </div>
       </Link>
+
+      {/* Wishlist Button (Always visible) */}
+      <button
+        onClick={toggleWishlist}
+        className="absolute top-2 right-2 p-2 rounded-full bg-black/40 backdrop-blur-sm transition-all duration-300 hover:bg-accent/80 z-10"
+        aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+      >
+        <Heart 
+          className={cn(
+            "h-4 w-4 transition-colors", 
+            isInWishlist ? "fill-accent text-accent" : "text-white"
+          )} 
+        />
+      </button>
 
       <div className="absolute bottom-0 left-0 right-0 flex justify-between p-4 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
         <Button 

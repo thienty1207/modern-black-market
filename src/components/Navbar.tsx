@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
@@ -21,6 +21,8 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,9 +36,38 @@ const Navbar = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location]);
+  
+  // Theo dõi số lượng sản phẩm trong wishlist và giỏ hàng
+  useEffect(() => {
+    const updateCounts = () => {
+      const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      setWishlistCount(wishlist.length);
+      
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const cartItemCount = cart.reduce((total: number, item: any) => total + (item.quantity || 1), 0);
+      setCartCount(cartItemCount);
+    };
+    
+    updateCounts();
+    
+    // Lắng nghe sự kiện storage changes
+    window.addEventListener('storage', updateCounts);
+    
+    // Custom event để cập nhật khi có thay đổi trong cùng tab
+    const handleCustomEvent = () => updateCounts();
+    window.addEventListener('cartUpdated', handleCustomEvent);
+    window.addEventListener('wishlistUpdated', handleCustomEvent);
+    
+    return () => {
+      window.removeEventListener('storage', updateCounts);
+      window.removeEventListener('cartUpdated', handleCustomEvent);
+      window.removeEventListener('wishlistUpdated', handleCustomEvent);
+    };
+  }, []);
 
   const navItems = [
     { name: 'Home', path: '/' },
+    { name: 'All Products', path: '/products' },
     { name: 'Phones', path: '/products/phones' },
     { name: 'Laptops', path: '/products/laptops' },
     { name: 'Cameras', path: '/products/cameras' }
@@ -80,7 +111,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-6">
           {navItems.map((item) => (
             <Link 
               key={item.name}
@@ -96,7 +127,7 @@ const Navbar = () => {
         </nav>
 
         {/* Desktop Action Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-3">
           <Button 
             variant="ghost" 
             size="icon" 
@@ -104,6 +135,21 @@ const Navbar = () => {
             onClick={() => setIsSearchOpen(true)}
           >
             <Search className="h-5 w-5" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="hover:bg-white/5 relative"
+            asChild
+          >
+            <Link to="/wishlist">
+              <Heart className="h-5 w-5" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 text-[10px] flex items-center justify-center bg-accent text-black font-medium rounded-full">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
           </Button>
           <Button 
             variant="ghost" 
@@ -123,13 +169,17 @@ const Navbar = () => {
           >
             <Link to="/cart">
               <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 text-[10px] flex items-center justify-center bg-accent text-black font-medium rounded-full">2</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 text-[10px] flex items-center justify-center bg-accent text-black font-medium rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </Button>
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center space-x-4">
+        <div className="md:hidden flex items-center space-x-3">
           <Button 
             variant="ghost" 
             size="icon" 
@@ -144,9 +194,28 @@ const Navbar = () => {
             className="hover:bg-white/5 relative"
             asChild
           >
+            <Link to="/wishlist">
+              <Heart className="h-5 w-5" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 text-[10px] flex items-center justify-center bg-accent text-black font-medium rounded-full">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="hover:bg-white/5 relative"
+            asChild
+          >
             <Link to="/cart">
               <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 text-[10px] flex items-center justify-center bg-accent text-black font-medium rounded-full">2</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 text-[10px] flex items-center justify-center bg-accent text-black font-medium rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </Button>
           <Button 
@@ -184,6 +253,17 @@ const Navbar = () => {
           </nav>
           <div className="flex flex-col space-y-4 mt-8">
             <Button className="w-full justify-start" variant="ghost" asChild>
+              <Link to="/wishlist">
+                <Heart className="h-5 w-5 mr-3" />
+                Wishlist
+                {wishlistCount > 0 && (
+                  <span className="ml-auto bg-accent text-black text-xs font-medium rounded-full px-2 py-0.5">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+            </Button>
+            <Button className="w-full justify-start" variant="ghost" asChild>
               <Link to="/user">
                 <User className="h-5 w-5 mr-3" />
                 My Account
@@ -193,6 +273,11 @@ const Navbar = () => {
               <Link to="/cart">
                 <ShoppingCart className="h-5 w-5 mr-3" />
                 Cart
+                {cartCount > 0 && (
+                  <span className="ml-auto bg-accent text-black text-xs font-medium rounded-full px-2 py-0.5">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </Button>
           </div>
@@ -211,6 +296,13 @@ const Navbar = () => {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
+            <CommandItem onSelect={() => {
+              navigate('/products');
+              setIsSearchOpen(false);
+            }}>
+              <Search className="mr-2 h-4 w-4" />
+              <span>All Products</span>
+            </CommandItem>
             <CommandItem onSelect={() => {
               navigate('/products/phones');
               setIsSearchOpen(false);

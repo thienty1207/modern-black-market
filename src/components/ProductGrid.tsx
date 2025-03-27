@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import ProductCard from './ProductCard';
 import { Product } from '@/services/productService';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProductGridProps {
   products: Product[];
@@ -22,6 +23,8 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
     offset: ["start end", "end start"]
   });
   
+  const isMobile = useIsMobile();
+  
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -36,14 +39,14 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
   return (
     <motion.div 
       ref={ref}
-      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6", className)}
+      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6", className)}
       variants={container}
       initial="hidden"
       animate={isInView ? "show" : "hidden"}
     >
       {products.map((product, index) => {
         // Tính toán các tham số hoạt ảnh phụ thuộc vào vị trí sản phẩm
-        const column = index % 4;
+        const column = index % (isMobile ? 2 : 4);
         const yOffset = (column % 2 === 0) ? 20 : -20;
         
         // Sử dụng useTransform để tạo hiệu ứng liên tục khi cuộn
@@ -56,13 +59,13 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
         const opacity = useTransform(
           scrollYProgress,
           [0, 0.2, 0.8, 1],
-          [0.3, 1, 1, 0.3]
+          [0.6, 1, 1, 0.6]
         );
         
         const scale = useTransform(
           scrollYProgress,
           [0, 0.2, 0.8, 1],
-          [0.8, 1, 1, 0.8]
+          [0.9, 1, 1, 0.9]
         );
 
         return (
