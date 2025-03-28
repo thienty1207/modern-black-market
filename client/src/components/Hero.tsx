@@ -32,7 +32,7 @@ const Hero = () => {
   ];
 
   useEffect(() => {
-    // Tăng tốc độ chuyển slide từ 6000ms xuống 4000ms
+    // slide effect
     const interval = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % slides.length);
     }, 2300);
