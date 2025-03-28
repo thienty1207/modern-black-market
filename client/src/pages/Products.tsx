@@ -16,7 +16,7 @@ const Categories = [
   { id: 'cameras', name: 'Máy Ảnh' },
 ];
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 8;
 
 // This is the direct data from the service - used as fallback
 const directProducts = [
@@ -699,8 +699,17 @@ const Products = () => {
           </div>
         ) : filteredProducts.length > 0 ? (
           <div>
-            <ProductGrid products={displayedProducts} />
-            {paginationComponent}
+            <ProductGrid 
+              products={displayedProducts} 
+              pagination={{
+                currentPage,
+                totalPages,
+                onPageChange: handlePageChange
+              }}
+            />
+            <div className="text-center mt-4 text-sm text-muted-foreground">
+              Showing {Math.min(filteredProducts.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} to {Math.min(filteredProducts.length, currentPage * ITEMS_PER_PAGE)} of {filteredProducts.length} products
+            </div>
           </div>
         ) : (
           <div className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
