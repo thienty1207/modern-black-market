@@ -1,4 +1,3 @@
-
 // Mock product data
 export interface Product {
   id: number;
@@ -15,6 +14,7 @@ export interface Product {
   featured?: boolean;
 }
 
+// Mock products data
 const products: Product[] = [
   {
     id: 1,
@@ -240,19 +240,224 @@ const products: Product[] = [
   }
 ];
 
+// Constant keys for localStorage
+const STORAGE_KEYS = {
+  ALL_PRODUCTS: 'all_products',
+  CATEGORY_PREFIX: 'category_',
+  FEATURED_PRODUCTS: 'featured_products'
+};
+
+// Helper - Lưu dữ liệu vào localStorage
+const saveToStorage = (key: string, data: any): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (error) {
+    console.error('Error saving to localStorage:', error);
+  }
+};
+
+// Helper - Lấy dữ liệu từ localStorage
+const getFromStorage = <T>(key: string): T | null => {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error('Error reading from localStorage:', error);
+    return null;
+  }
+};
+
+// Helper - Cung cấp dữ liệu đồng bộ nếu có
+const getSyncData = <T>(key: string, fallbackData: T): T => {
+  const cachedData = getFromStorage<T>(key);
+  if (cachedData) {
+    return cachedData;
+  }
+  
+  // Nếu không có dữ liệu cached, lưu dữ liệu fallback và trả về
+  saveToStorage(key, fallbackData);
+  return fallbackData;
+};
+
+// Mock API delay with timeout to prevent hanging
+const mockApiDelay = (timeout = 500) => {
+  return new Promise<void>((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      resolve();
+    }, timeout);
+    
+    // Safety timeout to prevent hanging requests
+    const safetyTimeout = setTimeout(() => {
+      clearTimeout(timeoutId);
+      reject(new Error('API request timed out'));
+    }, timeout + 1000);
+    
+    // Clear safety timeout when regular timeout completes
+    setTimeout(() => clearTimeout(safetyTimeout), timeout + 10);
+  });
+};
+
 // Service functions
-export const getProducts = (): Promise<Product[]> => {
-  return Promise.resolve(products);
+export const getProducts = async (): Promise<Product[]> => {
+  try {
+    // Trả về dữ liệu từ localStorage ngay lập tức nếu có
+    const cachedProducts = getFromStorage<Product[]>(STORAGE_KEYS.ALL_PRODUCTS);
+    if (cachedProducts) {
+      // Vẫn gọi API để cập nhật cache sau đó
+      mockApiDelay().then(() => {
+        saveToStorage(STORAGE_KEYS.ALL_PRODUCTS, products);
+      }).catch(error => {
+        console.warn('Background cache update failed:', error);
+      });
+      
+      return cachedProducts;
+    }
+    
+    await mockApiDelay();
+    
+    // Lưu vào cache và trả về dữ liệu
+    saveToStorage(STORAGE_KEYS.ALL_PRODUCTS, products);
+    return products;
+  } catch (error) {
+    console.error('Failed to fetch products:', error);
+    
+    // Trong trường hợp lỗi, vẫn thử trả về từ localStorage
+    const cachedProducts = getFromStorage<Product[]>(STORAGE_KEYS.ALL_PRODUCTS);
+    if (cachedProducts) {
+      return cachedProducts;
+    }
+    
+    // Nếu không có cache, trả về mảng rỗng để tránh lỗi ứng dụng
+    return [];
+  }
 };
 
-export const getProductById = (id: number): Promise<Product | undefined> => {
-  return Promise.resolve(products.find(product => product.id === id));
+// Hàm đồng bộ để lấy sản phẩm - dùng khi cần kết quả ngay lập tức
+export const getProductsSync = (): Product[] => {
+  return getSyncData(STORAGE_KEYS.ALL_PRODUCTS, products);
 };
 
-export const getProductsByCategory = (category: string): Promise<Product[]> => {
-  return Promise.resolve(products.filter(product => product.category === category));
+export const getProductsByCategory = async (category: string): Promise<Product[]> => {
+  try {
+    // Cache key cho danh mục cụ thể
+    const cacheKey = `${STORAGE_KEYS.CATEGORY_PREFIX}${category}`;
+    
+    // Trả về từ cache nếu có
+    const cachedCategoryProducts = getFromStorage<Product[]>(cacheKey);
+    if (cachedCategoryProducts) {
+      // Vẫn cập nhật cache ngầm
+      mockApiDelay().then(() => {
+        const filteredProducts = products.filter(product => product.category === category);
+        saveToStorage(cacheKey, filteredProducts);
+      }).catch(error => {
+        console.warn(`Background cache update for category ${category} failed:`, error);
+      });
+      
+      return cachedCategoryProducts;
+    }
+    
+    await mockApiDelay();
+    
+    const filteredProducts = products.filter(product => product.category === category);
+    saveToStorage(cacheKey, filteredProducts);
+    return filteredProducts;
+  } catch (error) {
+    console.error(`Failed to fetch products for category ${category}:`, error);
+    
+    // Trong trường hợp lỗi, vẫn thử trả về từ localStorage
+    const cacheKey = `${STORAGE_KEYS.CATEGORY_PREFIX}${category}`;
+    const cachedCategoryProducts = getFromStorage<Product[]>(cacheKey);
+    
+    if (cachedCategoryProducts) {
+      return cachedCategoryProducts;
+    }
+    
+    // Nếu không có cache, trả về tất cả sản phẩm và filter ở client
+    const allProducts = getProductsSync();
+    return allProducts.filter(product => product.category === category);
+  }
 };
 
-export const getFeaturedProducts = (): Promise<Product[]> => {
-  return Promise.resolve(products.filter(product => product.featured));
+// Hàm đồng bộ để lấy sản phẩm theo danh mục
+export const getProductsByCategorySync = (category: string): Product[] => {
+  const cacheKey = `${STORAGE_KEYS.CATEGORY_PREFIX}${category}`;
+  const cachedProducts = getFromStorage<Product[]>(cacheKey);
+  
+  if (cachedProducts) {
+    return cachedProducts;
+  }
+  
+  const filteredProducts = products.filter(product => product.category === category);
+  saveToStorage(cacheKey, filteredProducts);
+  return filteredProducts;
+};
+
+export const getProductById = async (id: number): Promise<Product | undefined> => {
+  try {
+    // Trước tiên kiểm tra nếu tất cả sản phẩm đã được cache
+    const allProducts = getProductsSync();
+    const foundProduct = allProducts.find(product => product.id === id);
+    
+    if (foundProduct) {
+      return foundProduct;
+    }
+    
+    // Nếu không tìm thấy trong cache, gọi API
+    await mockApiDelay();
+    return products.find(product => product.id === id);
+  } catch (error) {
+    console.error(`Failed to fetch product with id ${id}:`, error);
+    
+    // Cố gắng tìm trong dữ liệu mockup bất kể lỗi
+    return products.find(product => product.id === id);
+  }
+};
+
+export const getFeaturedProducts = async (): Promise<Product[]> => {
+  try {
+    // Trả về từ cache nếu có
+    const cachedFeaturedProducts = getFromStorage<Product[]>(STORAGE_KEYS.FEATURED_PRODUCTS);
+    if (cachedFeaturedProducts) {
+      // Vẫn cập nhật cache ngầm
+      mockApiDelay().then(() => {
+        const featuredProducts = products.filter(product => product.featured);
+        saveToStorage(STORAGE_KEYS.FEATURED_PRODUCTS, featuredProducts);
+      }).catch(error => {
+        console.warn('Background cache update for featured products failed:', error);
+      });
+      
+      return cachedFeaturedProducts;
+    }
+    
+    await mockApiDelay();
+    
+    const featuredProducts = products.filter(product => product.featured);
+    saveToStorage(STORAGE_KEYS.FEATURED_PRODUCTS, featuredProducts);
+    return featuredProducts;
+  } catch (error) {
+    console.error('Failed to fetch featured products:', error);
+    
+    // Trong trường hợp lỗi, vẫn thử trả về từ localStorage
+    const cachedFeaturedProducts = getFromStorage<Product[]>(STORAGE_KEYS.FEATURED_PRODUCTS);
+    
+    if (cachedFeaturedProducts) {
+      return cachedFeaturedProducts;
+    }
+    
+    // Nếu không có cache, trả về từ dữ liệu mockup
+    return products.filter(product => product.featured);
+  }
+};
+
+// Hàm đồng bộ để lấy sản phẩm nổi bật
+export const getFeaturedProductsSync = (): Product[] => {
+  const cachedProducts = getFromStorage<Product[]>(STORAGE_KEYS.FEATURED_PRODUCTS);
+  
+  if (cachedProducts) {
+    return cachedProducts;
+  }
+  
+  const featuredProducts = products.filter(product => product.featured);
+  saveToStorage(STORAGE_KEYS.FEATURED_PRODUCTS, featuredProducts);
+  return featuredProducts;
 };

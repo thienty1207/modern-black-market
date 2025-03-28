@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,9 @@ import ProductGrid from '@/components/ProductGrid';
 import { getProducts, Product } from '@/services/productService';
 import { Search as SearchIcon, X } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Pagination from '@/components/ui/pagination';
+
+const ITEMS_PER_PAGE = 5;
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,7 +17,10 @@ const Search = () => {
   const [query, setQuery] = useState(initialQuery);
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -28,7 +33,12 @@ const Search = () => {
           filterProducts(allProducts, initialQuery);
         } else {
           setFilteredProducts([]);
+          setDisplayedProducts([]);
+          setTotalPages(1);
         }
+        
+        // Reset trang về 1 khi thay đổi query
+        setCurrentPage(1);
       } catch (error) {
         console.error('Failed to load products:', error);
       } finally {
@@ -38,10 +48,27 @@ const Search = () => {
 
     loadProducts();
   }, [initialQuery]);
+  
+  // Cập nhật sản phẩm hiển thị khi thay đổi trang hoặc kết quả tìm kiếm
+  useEffect(() => {
+    if (filteredProducts.length === 0) {
+      setDisplayedProducts([]);
+      return;
+    }
+    
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    setDisplayedProducts(filteredProducts.slice(startIndex, endIndex));
+    
+    // Cuộn lên đầu khi chuyển trang
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [filteredProducts, currentPage]);
 
   const filterProducts = (productList: Product[], searchQuery: string) => {
     if (!searchQuery.trim()) {
       setFilteredProducts([]);
+      setDisplayedProducts([]);
+      setTotalPages(1);
       return;
     }
     
@@ -52,6 +79,7 @@ const Search = () => {
     );
     
     setFilteredProducts(filtered);
+    setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -59,6 +87,7 @@ const Search = () => {
     if (query.trim()) {
       setSearchParams({ q: query });
       filterProducts(products, query);
+      setCurrentPage(1); // Reset trang về 1 khi tìm kiếm mới
     }
   };
 
@@ -66,6 +95,13 @@ const Search = () => {
     setQuery('');
     setSearchParams({});
     setFilteredProducts([]);
+    setDisplayedProducts([]);
+    setTotalPages(1);
+    setCurrentPage(1);
+  };
+  
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const containerVariants = {
@@ -149,7 +185,21 @@ const Search = () => {
               </h2>
             </motion.div>
             <motion.div variants={itemVariants}>
-              <ProductGrid products={filteredProducts} />
+              <ProductGrid products={displayedProducts} />
+              
+              {/* Phân trang */}
+              {filteredProducts.length > ITEMS_PER_PAGE && (
+                <div className="mt-8">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                  <div className="text-center mt-4 text-sm text-muted-foreground">
+                    Showing {Math.min(filteredProducts.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} to {Math.min(filteredProducts.length, currentPage * ITEMS_PER_PAGE)} of {filteredProducts.length} results
+                  </div>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         ) : initialQuery ? (

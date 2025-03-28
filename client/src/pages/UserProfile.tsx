@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const UserProfile = () => {
   const containerVariants = {
@@ -166,8 +166,13 @@ const UserProfile = () => {
                               <p className="font-medium">${(order * 299).toFixed(2)}</p>
                               <p className="text-sm text-muted-foreground mt-1">{order + 1} items</p>
                             </div>
-                            <Button variant="outline" size="sm" className="mt-2 md:mt-0">
-                              View Order
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="mt-2 md:mt-0"
+                              asChild
+                            >
+                              <Link to={`/order/${100000 + order}`}>View Order</Link>
                             </Button>
                           </div>
                         </div>
