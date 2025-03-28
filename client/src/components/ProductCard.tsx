@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Eye, Heart } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatCurrency } from '@/services/productService';
 
 interface ProductCardProps {
   id: number;
@@ -152,7 +153,7 @@ const ProductCard = ({ id, name, price, image, category, className }: ProductCar
               <span className="text-[10px] sm:text-xs uppercase tracking-wider text-accent/80 block truncate">{category}</span>
               <h3 className="mt-1 text-sm sm:text-base font-medium leading-tight line-clamp-2 group-hover:text-accent transition-colors">{name}</h3>
               <div className="flex items-center justify-between mt-1">
-                <span className="text-base sm:text-lg font-semibold">${price.toLocaleString()}</span>
+                <span className="text-base sm:text-lg font-semibold">{formatCurrency(price)}</span>
                 
                 {/* Cart button beside price */}
                 <Button 

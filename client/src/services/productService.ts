@@ -17,13 +17,23 @@ export interface Product {
   salesCount?: number;
 }
 
+// Currency formatter for VND
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
+};
+
 // Mock products data
 const products: Product[] = [
   {
     id: 1,
     name: "iPhone 13 Pro",
-    price: 999,
-    originalPrice: 1099,
+    price: 999 * 24500,
+    originalPrice: 1099 * 24500,
     description: "Experience the ultimate iPhone with our most advanced camera system and stunning Super Retina XDR display with ProMotion.",
     features: [
       "A15 Bionic chip with 5-core GPU",
@@ -48,7 +58,7 @@ const products: Product[] = [
   {
     id: 2,
     name: "Samsung Galaxy S22 Ultra",
-    price: 1199,
+    price: 1199 * 24500,
     description: "The ultimate combination of the S series and Note series, with built-in S Pen, powerful camera, and long-lasting battery.",
     features: [
       "Dynamic AMOLED 2X display",
@@ -71,8 +81,8 @@ const products: Product[] = [
   },
   {
     id: 3,
-    name: "Google Pixel 6 Pro",
-    price: 899,
+    name: "Sam Sung 20",
+    price: 899 * 24500,
     description: "Experience the best of Google with the custom-built Google Tensor processor and advanced camera system.",
     features: [
       "Google Tensor chip",
@@ -88,15 +98,15 @@ const products: Product[] = [
       storage: "128GB, 256GB, 512GB"
     },
     images: [
-      "https://images.unsplash.com/photo-1635870723802-e88d76ae324c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1598965402089-897e93a166f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+      "https://i.pinimg.com/736x/93/c3/5c/93c35c1f28deac8697b5476a29b0a6c1.jpg",
+      "https://i.pinimg.com/736x/a1/bb/be/a1bbbee85fbbf0cceb1c8f02031d78fd.jpg"
     ],
     category: "phones"
   },
   {
     id: 4,
     name: "MacBook Pro 16",
-    price: 2499,
+    price: 2499 * 24500,
     description: "Supercharged for pros. The most powerful MacBook Pro ever is here with the blazing-fast M1 Pro or M1 Max chip.",
     features: [
       "Apple M1 Pro or M1 Max chip",
@@ -121,7 +131,7 @@ const products: Product[] = [
   {
     id: 5,
     name: "Dell XPS 15",
-    price: 1799,
+    price: 1799 * 24500,
     description: "A stunning 15.6-inch InfinityEdge display in a compact form factor powered by 11th Gen Intel Core processors.",
     features: [
       "11th Gen Intel Core processors",
@@ -145,8 +155,8 @@ const products: Product[] = [
   {
     id: 6,
     name: "Razer Blade 15",
-    price: 1999,
-    originalPrice: 2199,
+    price: 1999 * 24500,
+    originalPrice: 2199 * 24500,
     description: "The world's smallest 15.6-inch gaming laptop with NVIDIA GeForce RTX graphics and 10th Gen Intel Core i7.",
     features: [
       "10th Gen Intel Core i7",
@@ -170,7 +180,7 @@ const products: Product[] = [
   {
     id: 7,
     name: "Sony Alpha a7 IV",
-    price: 2499,
+    price: 2499 * 24500,
     description: "A full-frame hybrid camera with outstanding still image quality and evolved video technology for creators.",
     features: [
       "33MP full-frame Exmor R CMOS sensor",
@@ -195,7 +205,7 @@ const products: Product[] = [
   {
     id: 8,
     name: "Canon EOS R5",
-    price: 3899,
+    price: 3899 * 24500,
     description: "A revolutionary full-frame mirrorless camera that delivers uncompromising image quality and 8K video recording.",
     features: [
       "45MP full-frame CMOS sensor",
@@ -219,8 +229,8 @@ const products: Product[] = [
   {
     id: 9,
     name: "Nikon Z6 II",
-    price: 1999,
-    originalPrice: 2199,
+    price: 1999 * 24500,
+    originalPrice: 2199 * 24500,
     description: "A versatile full-frame mirrorless camera built for demanding creators with improved speed, power, and low-light performance.",
     features: [
       "24.5MP BSI CMOS sensor",

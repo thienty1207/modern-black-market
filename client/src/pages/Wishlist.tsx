@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { getProducts, Product } from '@/services/productService';
+import { getProducts, Product, formatCurrency } from '@/services/productService';
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
@@ -143,7 +143,7 @@ const Wishlist = () => {
                           <span className="text-xs uppercase tracking-wider text-accent/80">{item.category}</span>
                           <h3 className="text-xl font-medium mt-1">{item.name}</h3>
                         </div>
-                        <span className="text-xl font-semibold">${item.price.toLocaleString()}</span>
+                        <span className="text-xl font-semibold">{formatCurrency(item.price)}</span>
                       </div>
                       <p className="text-muted-foreground mt-4 line-clamp-2">
                         {item.description || "High-quality product with premium features and elegant design."}

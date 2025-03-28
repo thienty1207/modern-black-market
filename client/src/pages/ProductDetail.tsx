@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getProductById, Product } from '@/services/productService';
+import { getProductById, Product, formatCurrency } from '@/services/productService';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ShoppingCart, Heart, Share2, Check } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -169,22 +168,22 @@ const ProductDetail = () => {
             </div>
             
             <div className="flex items-baseline space-x-4">
-              <span className="text-3xl font-bold">${product.price.toLocaleString()}</span>
+              <span className="text-3xl font-bold">{formatCurrency(product.price)}</span>
               {product.originalPrice && (
                 <span className="text-xl text-muted-foreground line-through">
-                  ${product.originalPrice.toLocaleString()}
+                  {formatCurrency(product.originalPrice)}
                 </span>
               )}
               {product.originalPrice && (
                 <span className="text-sm px-2 py-1 bg-accent/20 rounded-full text-accent-foreground font-medium">
-                  Save ${(product.originalPrice - product.price).toLocaleString()}
+                  Tiết kiệm {formatCurrency(product.originalPrice - product.price)}
                 </span>
               )}
             </div>
             
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <Check className="text-green-500 h-4 w-4" />
-              <span>In stock and ready to ship</span>
+              <span>Còn hàng & sẵn sàng giao hàng</span>
             </div>
             
             <Separator className="bg-white/10" />

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Hero from '@/components/Hero';
 import FeaturedCategory from '@/components/FeaturedCategory';
 import ProductGrid from '@/components/ProductGrid';
-import { getFeaturedProducts, Product } from '@/services/productService';
+import { getFeaturedProducts, Product, formatCurrency } from '@/services/productService';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, AlertCircle } from 'lucide-react';
@@ -18,8 +18,8 @@ const sampleProducts: Product[] = [
   {
     id: 1,
     name: "iPhone 13 Pro",
-    price: 999,
-    originalPrice: 1099,
+    price: 999 * 24500,
+    originalPrice: 1099 * 24500,
     description: "Trải nghiệm iPhone tối ưu với hệ thống camera tiên tiến nhất của chúng tôi.",
     features: ["Chip A15 Bionic", "Hệ thống camera Pro", "Lên tới 28 giờ xem video"],
     specs: {
@@ -39,7 +39,7 @@ const sampleProducts: Product[] = [
   {
     id: 2,
     name: "Samsung Galaxy S22 Ultra",
-    price: 1199,
+    price: 1199 * 24500,
     description: "Sự kết hợp tối ưu của dòng S và Note series.",
     features: ["Màn hình Dynamic AMOLED 2X", "Camera 108MP", "Bút S Pen tích hợp"],
     specs: {
@@ -58,8 +58,8 @@ const sampleProducts: Product[] = [
   },
   {
     id: 3,
-    name: "Google Pixel 6 Pro",
-    price: 899,
+    name: "Sam Sung 20",
+    price: 899 * 24500,
     description: "Trải nghiệm tinh hoa Google với bộ vi xử lý Google Tensor được thiết kế riêng.",
     features: ["Chip Google Tensor", "Camera rộng 50MP", "Android với tính năng độc quyền của Pixel"],
     specs: {
@@ -70,8 +70,8 @@ const sampleProducts: Product[] = [
       storage: "128GB, 256GB, 512GB"
     },
     images: [
-      "https://images.unsplash.com/photo-1635870723802-e88d76ae324c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1598965402089-897e93a166f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+      "https://i.pinimg.com/736x/93/c3/5c/93c35c1f28deac8697b5476a29b0a6c1.jpg",
+      "https://i.pinimg.com/736x/a1/bb/be/a1bbbee85fbbf0cceb1c8f02031d78fd.jpg"
     ],
     category: "phones",
     featured: true
@@ -79,7 +79,7 @@ const sampleProducts: Product[] = [
   {
     id: 4,
     name: "MacBook Pro 16",
-    price: 2499,
+    price: 2499 * 24500,
     description: "Hiệu suất vượt trội dành cho các chuyên gia. MacBook Pro mạnh mẽ nhất đã có mặt.",
     features: ["Chip Apple M1 Pro hoặc M1 Max", "Bộ nhớ thống nhất lên đến 64GB", "Lưu trữ lên đến 8TB"],
     specs: {
@@ -99,7 +99,7 @@ const sampleProducts: Product[] = [
   {
     id: 5,
     name: "Dell XPS 15",
-    price: 1799,
+    price: 1799 * 24500,
     description: "Màn hình InfinityEdge 15,6 inch ấn tượng trong thiết kế nhỏ gọn.",
     features: ["Bộ vi xử lý Intel Core thế hệ 11", "NVIDIA GeForce RTX 3050 Ti", "Màn hình 4K UHD+ 15,6 inch"],
     specs: {
@@ -119,7 +119,7 @@ const sampleProducts: Product[] = [
   {
     id: 6,
     name: "Sony Alpha a7 IV",
-    price: 2499,
+    price: 2499 * 24500,
     description: "Máy ảnh hybrid full-frame với chất lượng hình ảnh tĩnh vượt trội.",
     features: ["Cảm biến CMOS Exmor R full-frame 33MP", "Bộ xử lý BIONZ XR", "Quay video 4K 60p"],
     specs: {

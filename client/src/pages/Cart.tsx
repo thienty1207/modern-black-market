@@ -6,20 +6,21 @@ import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Trash2, Plus, Minus, CreditCard, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { formatCurrency } from '@/services/productService';
 
 // Sample cart data
 const initialCart = [
   {
     id: 1,
     name: "Premium Smartphone X",
-    price: 899,
+    price: 899 * 24500,
     image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
     quantity: 1
   },
   {
     id: 2,
     name: "Wireless Earbuds Pro",
-    price: 199,
+    price: 199 * 24500,
     image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
     quantity: 1
   }
@@ -149,7 +150,7 @@ const Cart = () => {
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="font-medium text-lg mb-2">{item.name}</h3>
-                    <p className="text-2xl font-bold">${item.price.toLocaleString()}</p>
+                    <p className="text-2xl font-bold">{formatCurrency(item.price)}</p>
                   </div>
                   
                   <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
@@ -196,13 +197,13 @@ const Cart = () => {
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tạm tính</span>
-                <span>${subtotal.toLocaleString()}</span>
+                <span>{formatCurrency(subtotal)}</span>
               </div>
               
               {discount > 0 && (
                 <div className="flex justify-between text-accent">
                   <span>Giảm giá ({discount}%)</span>
-                  <span>-${discountAmount.toLocaleString()}</span>
+                  <span>-{formatCurrency(discountAmount)}</span>
                 </div>
               )}
               
@@ -215,7 +216,7 @@ const Cart = () => {
               
               <div className="flex justify-between text-lg font-bold">
                 <span>Tổng cộng</span>
-                <span>${total.toLocaleString()}</span>
+                <span>{formatCurrency(total)}</span>
               </div>
             </div>
             

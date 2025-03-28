@@ -5,7 +5,7 @@ import { ArrowLeft, Package, Truck, CheckCircle, Clock, AlertCircle } from 'luci
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Product } from '@/services/productService';
+import { Product, formatCurrency } from '@/services/productService';
 
 // Định nghĩa các trạng thái đơn hàng
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
@@ -48,7 +48,7 @@ const mockOrders: Record<string, Order> = {
         id: 1,
         productId: 1,
         name: 'iPhone 13 Pro',
-        price: 999,
+        price: 999 * 24500,
         quantity: 1,
         image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
       },
@@ -56,12 +56,12 @@ const mockOrders: Record<string, Order> = {
         id: 2,
         productId: 4,
         name: 'MacBook Pro 16',
-        price: 2499,
+        price: 2499 * 24500,
         quantity: 1,
         image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
       }
     ],
-    total: 3498,
+    total: 3498 * 24500,
     shippingAddress: {
       name: 'John Doe',
       street: '123 Main St',
@@ -81,12 +81,12 @@ const mockOrders: Record<string, Order> = {
         id: 1,
         productId: 5,
         name: 'Dell XPS 15',
-        price: 1799,
+        price: 1799 * 24500,
         quantity: 1,
         image: 'https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
       }
     ],
-    total: 1799,
+    total: 1799 * 24500,
     shippingAddress: {
       name: 'John Doe',
       street: '123 Main St',
@@ -106,20 +106,20 @@ const mockOrders: Record<string, Order> = {
         id: 1,
         productId: 7,
         name: 'Sony Alpha a7 IV',
-        price: 2499,
+        price: 2499 * 24500,
         quantity: 1,
         image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
       },
       {
         id: 2,
         productId: 3,
-        name: 'Google Pixel 6 Pro',
-        price: 899,
+        name: 'Sam Sung 20',
+        price: 899 * 24500,
         quantity: 1,
-        image: 'https://images.unsplash.com/photo-1635870723802-e88d76ae324c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
+        image: 'https://i.pinimg.com/736x/a1/bb/be/a1bbbee85fbbf0cceb1c8f02031d78fd.jpg'
       }
     ],
-    total: 3398,
+    total: 3398 * 24500,
     shippingAddress: {
       name: 'John Doe',
       street: '123 Main St',
@@ -341,7 +341,7 @@ const OrderDetail = () => {
                       <div className="text-sm text-muted-foreground">Quantity: {item.quantity}</div>
                     </div>
                     <div className="text-right font-medium">
-                      ${item.price.toFixed(2)}
+                      {formatCurrency(item.price)}
                     </div>
                   </div>
                 ))}
@@ -373,15 +373,15 @@ const OrderDetail = () => {
                   <div className="bg-white/5 rounded-lg p-4">
                     <div className="flex justify-between mb-2">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${order.total.toFixed(2)}</span>
+                      <span>{formatCurrency(order.total)}</span>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span>Free</span>
+                      <span>Miễn phí</span>
                     </div>
                     <div className="flex justify-between font-medium text-lg pt-3 border-t border-white/10">
                       <span>Total</span>
-                      <span>${order.total.toFixed(2)}</span>
+                      <span>{formatCurrency(order.total)}</span>
                     </div>
                   </div>
                 </div>

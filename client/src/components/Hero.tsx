@@ -35,7 +35,7 @@ const Hero = () => {
     // slide effect
     const interval = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % slides.length);
-    }, 2300);
+    }, 3000);
     
     return () => clearInterval(interval);
   }, [slides.length]);
