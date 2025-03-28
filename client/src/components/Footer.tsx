@@ -1,114 +1,95 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone } from 'lucide-react';
+import { Mail, Phone, Facebook } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Footer = () => {
   const fadeInUpVariants = {
-    hidden: { opacity: 0, y: 40 },
+    hidden: { opacity: 0, y: 20 },
     visible: (custom: number) => ({
       opacity: 1,
       y: 0,
       transition: { 
-        duration: 0.7,
-        delay: custom * 0.1,
+        duration: 0.5,
+        delay: custom * 0.05,
         ease: "easeOut"
       }
     })
   };
 
+  const motionConfig = {
+    initial: "hidden",
+    whileInView: "visible",
+    viewport: { once: true, margin: "-10%" },
+  };
+
   return (
     <footer className="bg-black border-t border-white/10 pt-8 md:pt-12 pb-6 md:pb-8 px-4 md:px-8 mt-8 overflow-hidden w-full">
-      <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-10">
         <motion.div 
-          className="space-y-4 col-span-2 sm:col-span-2 md:col-span-1"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, margin: "-50px" }}
+          className="space-y-4 col-span-1"
+          {...motionConfig}
           variants={fadeInUpVariants}
           custom={0}
+          style={{ willChange: "transform", transform: "translateZ(0)" }}
         >
           <h2 className="text-xl font-display font-bold tracking-tight">
             <span className="text-gradient">TECHSHOP</span>
           </h2>
           <p className="text-sm text-muted-foreground max-w-xs">
-            Premium tech products with minimalist design and exceptional performance.
+            Sản phẩm công nghệ cao cấp với thiết kế tối giản và hiệu suất vượt trội.
           </p>
         </motion.div>
         
         <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, margin: "-50px" }}
+          {...motionConfig}
           variants={fadeInUpVariants}
           custom={1}
           className="col-span-1"
+          style={{ willChange: "transform", transform: "translateZ(0)" }}
         >
-          <h3 className="text-sm font-medium mb-4">Categories</h3>
+          <h3 className="text-sm font-medium mb-4">Danh Mục</h3>
           <ul className="space-y-2 md:space-y-3">
             <li>
               <Link to="/products/phones" className="text-sm text-muted-foreground hover:text-accent transition-colors">
-                Phones
+                Điện Thoại
               </Link>
             </li>
             <li>
               <Link to="/products/laptops" className="text-sm text-muted-foreground hover:text-accent transition-colors">
-                Laptops
+                Laptop
               </Link>
             </li>
             <li>
               <Link to="/products/cameras" className="text-sm text-muted-foreground hover:text-accent transition-colors">
-                Cameras
+                Máy Ảnh
               </Link>
             </li>
           </ul>
         </motion.div>
         
         <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, margin: "-50px" }}
+          {...motionConfig}
           variants={fadeInUpVariants}
           custom={2}
           className="col-span-1"
+          style={{ willChange: "transform", transform: "translateZ(0)" }}
         >
-          <h3 className="text-sm font-medium mb-4">Support</h3>
-          <ul className="space-y-2 md:space-y-3">
-            <li>
-              <Link to="#" className="text-sm text-muted-foreground hover:text-accent transition-colors">
-                Contact Us
-              </Link>
-            </li>
-            <li>
-              <Link to="#" className="text-sm text-muted-foreground hover:text-accent transition-colors">
-                FAQ
-              </Link>
-            </li>
-            <li>
-              <Link to="#" className="text-sm text-muted-foreground hover:text-accent transition-colors">
-                Shipping & Returns
-              </Link>
-            </li>
-          </ul>
-        </motion.div>
-        
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, margin: "-50px" }}
-          variants={fadeInUpVariants}
-          custom={3}
-          className="col-span-2 sm:col-span-2 md:col-span-1"
-        >
-          <h3 className="text-sm font-medium mb-4">Contact</h3>
+          <h3 className="text-sm font-medium mb-4">Liên Hệ</h3>
           <ul className="space-y-2 md:space-y-3">
             <li className="flex items-center space-x-2">
               <Mail className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              <span className="text-sm text-muted-foreground break-all">contact@techshop.com</span>
+              <span className="text-sm text-muted-foreground break-all">tytybill123@gmail.com</span>
             </li>
             <li className="flex items-center space-x-2">
               <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              <span className="text-sm text-muted-foreground">+1 (234) 567-8901</span>
+              <span className="text-sm text-muted-foreground">+84 399 623 947</span>
+            </li>
+            <li className="flex items-center space-x-2">
+              <Facebook className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <Link to="https://www.facebook.com/tienhoan00/" className="text-sm text-muted-foreground hover:text-accent transition-colors">
+                Facebook
+              </Link>
             </li>
           </ul>
         </motion.div>
@@ -116,21 +97,20 @@ const Footer = () => {
       
       <motion.div 
         className="max-w-7xl mx-auto mt-8 md:mt-12 pt-4 md:pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, margin: "-50px" }}
+        {...motionConfig}
         variants={fadeInUpVariants}
-        custom={4}
+        custom={3}
+        style={{ willChange: "transform", transform: "translateZ(0)" }}
       >
         <p className="text-xs text-muted-foreground text-center md:text-left">
-          © {new Date().getFullYear()} TechShop. All rights reserved.
+          © {new Date().getFullYear()} TechShop. Đã đăng ký bản quyền.
         </p>
         <div className="flex space-x-6 mt-4 md:mt-0">
           <Link to="#" className="text-xs text-muted-foreground hover:text-accent transition-colors">
-            Privacy Policy
+            Chính Sách Bảo Mật
           </Link>
           <Link to="#" className="text-xs text-muted-foreground hover:text-accent transition-colors">
-            Terms of Service
+            Điều Khoản Dịch Vụ
           </Link>
         </div>
       </motion.div>
