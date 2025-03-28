@@ -93,7 +93,7 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="inline-block mb-4 px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20"
             >
-              <span className="text-xs font-medium text-accent-foreground">New Collection</span>
+              <span className="text-xs font-medium text-accent-foreground">Bộ Sưu Tập Mới</span>
             </motion.div>
             <motion.h1 
               initial={{ y: 30, opacity: 0 }}
