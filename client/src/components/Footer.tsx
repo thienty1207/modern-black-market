@@ -34,7 +34,7 @@ const Footer = () => {
           style={{ willChange: "transform", transform: "translateZ(0)" }}
         >
           <h2 className="text-xl font-display font-bold tracking-tight">
-            <span className="text-gradient">TECHSHOP</span>
+            <span className="text-gradient">Thien Ty Shop</span>
           </h2>
           <p className="text-sm text-muted-foreground max-w-xs">
             Sản phẩm công nghệ cao cấp với thiết kế tối giản và hiệu suất vượt trội.
@@ -103,7 +103,7 @@ const Footer = () => {
         style={{ willChange: "transform", transform: "translateZ(0)" }}
       >
         <p className="text-xs text-muted-foreground text-center md:text-left">
-          © {new Date().getFullYear()} TechShop. Đã đăng ký bản quyền.
+          © {new Date().getFullYear()} Thien Ty Shop. Đã đăng ký bản quyền.
         </p>
         <div className="flex space-x-6 mt-4 md:mt-0">
           <Link to="#" className="text-xs text-muted-foreground hover:text-accent transition-colors">
