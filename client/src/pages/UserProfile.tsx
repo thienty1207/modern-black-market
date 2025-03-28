@@ -38,10 +38,10 @@ const UserProfile = () => {
       <div className="max-w-5xl mx-auto">
         <motion.div variants={itemVariants} className="text-center mb-12">
           <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-gradient mb-6">
-            My Account
+            Tài Khoản Của Tôi
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Manage your profile, orders, and preferences
+            Quản lý hồ sơ, đơn hàng và tùy chọn của bạn
           </p>
         </motion.div>
 
@@ -58,21 +58,21 @@ const UserProfile = () => {
                   <p className="text-sm text-muted-foreground">john.doe@example.com</p>
                 </div>
                 <Button variant="outline" size="sm" className="w-full mt-4">
-                  Edit Profile
+                  Chỉnh Sửa Hồ Sơ
                 </Button>
               </div>
               
               <div className="mt-8 space-y-2">
                 <div className="flex justify-between items-center py-2 border-b border-white/10">
-                  <span className="text-muted-foreground">Member since</span>
-                  <span>Jan 2023</span>
+                  <span className="text-muted-foreground">Thành viên từ</span>
+                  <span>Tháng 1/2023</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-white/10">
-                  <span className="text-muted-foreground">Orders</span>
+                  <span className="text-muted-foreground">Đơn hàng</span>
                   <span>12</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-white/10">
-                  <span className="text-muted-foreground">Wishlist items</span>
+                  <span className="text-muted-foreground">Sản phẩm yêu thích</span>
                   <span>8</span>
                 </div>
               </div>
@@ -82,27 +82,27 @@ const UserProfile = () => {
           <div className="md:col-span-2">
             <Tabs defaultValue="account" className="w-full">
               <TabsList className="w-full mb-8 grid grid-cols-3">
-                <TabsTrigger value="account">Account</TabsTrigger>
-                <TabsTrigger value="orders">Orders</TabsTrigger>
-                <TabsTrigger value="addresses">Addresses</TabsTrigger>
+                <TabsTrigger value="account">Tài Khoản</TabsTrigger>
+                <TabsTrigger value="orders">Đơn Hàng</TabsTrigger>
+                <TabsTrigger value="addresses">Địa Chỉ</TabsTrigger>
               </TabsList>
               
               <TabsContent value="account">
                 <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
                   <CardHeader>
-                    <CardTitle>Account Information</CardTitle>
+                    <CardTitle>Thông Tin Tài Khoản</CardTitle>
                     <CardDescription>
-                      Update your account details and preferences
+                      Cập nhật thông tin chi tiết và tùy chọn tài khoản
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
+                        <Label htmlFor="firstName">Tên</Label>
                         <Input id="firstName" defaultValue="John" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
+                        <Label htmlFor="lastName">Họ</Label>
                         <Input id="lastName" defaultValue="Doe" />
                       </div>
                     </div>
@@ -111,26 +111,26 @@ const UserProfile = () => {
                       <Input id="email" type="email" defaultValue="john.doe@example.com" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor="phone">Điện Thoại</Label>
                       <Input id="phone" defaultValue="+1 234 567 890" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="currentPassword">Current Password</Label>
+                      <Label htmlFor="currentPassword">Mật Khẩu Hiện Tại</Label>
                       <Input id="currentPassword" type="password" />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="newPassword">New Password</Label>
+                        <Label htmlFor="newPassword">Mật Khẩu Mới</Label>
                         <Input id="newPassword" type="password" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Confirm Password</Label>
+                        <Label htmlFor="confirmPassword">Xác Nhận Mật Khẩu</Label>
                         <Input id="confirmPassword" type="password" />
                       </div>
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button className="rounded-full">Save Changes</Button>
+                    <Button className="rounded-full">Lưu Thay Đổi</Button>
                   </CardFooter>
                 </Card>
               </TabsContent>
@@ -138,9 +138,9 @@ const UserProfile = () => {
               <TabsContent value="orders">
                 <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
                   <CardHeader>
-                    <CardTitle>Order History</CardTitle>
+                    <CardTitle>Lịch Sử Đơn Hàng</CardTitle>
                     <CardDescription>
-                      View and track your recent orders
+                      Xem và theo dõi đơn hàng gần đây của bạn
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -153,18 +153,18 @@ const UserProfile = () => {
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-medium">Order #{100000 + order}</span>
+                                <span className="font-medium">Đơn hàng #{100000 + order}</span>
                                 <span className="px-2 py-1 text-xs rounded-full bg-accent/20 text-accent-foreground">
-                                  {order === 1 ? 'Delivered' : order === 2 ? 'Shipped' : 'Processing'}
+                                  {order === 1 ? 'Đã giao' : order === 2 ? 'Đang vận chuyển' : 'Đang xử lý'}
                                 </span>
                               </div>
                               <p className="text-sm text-muted-foreground mt-1">
-                                Placed on {order === 1 ? 'June 12, 2023' : order === 2 ? 'May 29, 2023' : 'April 15, 2023'}
+                                Đặt ngày {order === 1 ? '12/06/2023' : order === 2 ? '29/05/2023' : '15/04/2023'}
                               </p>
                             </div>
                             <div>
                               <p className="font-medium">${(order * 299).toFixed(2)}</p>
-                              <p className="text-sm text-muted-foreground mt-1">{order + 1} items</p>
+                              <p className="text-sm text-muted-foreground mt-1">{order + 1} sản phẩm</p>
                             </div>
                             <Button 
                               variant="outline" 
@@ -172,7 +172,7 @@ const UserProfile = () => {
                               className="mt-2 md:mt-0"
                               asChild
                             >
-                              <Link to={`/order/${100000 + order}`}>View Order</Link>
+                              <Link to={`/order/${100000 + order}`}>Xem Đơn Hàng</Link>
                             </Button>
                           </div>
                         </div>
@@ -185,15 +185,15 @@ const UserProfile = () => {
               <TabsContent value="addresses">
                 <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
                   <CardHeader>
-                    <CardTitle>Saved Addresses</CardTitle>
+                    <CardTitle>Địa Chỉ Đã Lưu</CardTitle>
                     <CardDescription>
-                      Manage your shipping and billing addresses
+                      Quản lý địa chỉ giao hàng và thanh toán của bạn
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-medium">Default Address</h3>
+                        <h3 className="font-medium">Địa Chỉ Mặc Định</h3>
                         <div className="text-sm text-muted-foreground mt-2 space-y-1">
                           <p>John Doe</p>
                           <p>123 Main Street</p>
@@ -204,13 +204,13 @@ const UserProfile = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Button variant="outline" size="sm">Edit</Button>
-                        <Button variant="outline" size="sm" className="ml-2">Remove</Button>
+                        <Button variant="outline" size="sm">Sửa</Button>
+                        <Button variant="outline" size="sm" className="ml-2">Xóa</Button>
                       </div>
                     </div>
                     
                     <div className="pt-4">
-                      <Button className="rounded-full">Add New Address</Button>
+                      <Button className="rounded-full">Thêm Địa Chỉ Mới</Button>
                     </div>
                   </CardContent>
                 </Card>

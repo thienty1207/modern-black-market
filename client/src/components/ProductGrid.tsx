@@ -178,8 +178,8 @@ const ProductGrid = ({ products, className, pagination }: ProductGridProps) => {
   if (products.length === 0) {
     return (
       <div className="text-center py-8 md:py-12 px-4">
-        <h3 className="text-lg font-medium mb-2">No products found</h3>
-        <p className="text-muted-foreground">Try adjusting your filters or selecting a different category</p>
+        <h3 className="text-lg font-medium mb-2">Không tìm thấy sản phẩm</h3>
+        <p className="text-muted-foreground">Hãy thử điều chỉnh bộ lọc hoặc chọn danh mục khác</p>
       </div>
     );
   }

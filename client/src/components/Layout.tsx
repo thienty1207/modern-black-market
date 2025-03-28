@@ -6,6 +6,7 @@ import { Toaster } from 'sonner';
 
 const Layout = () => {
   const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   // Scroll to top on route change
   useEffect(() => {
@@ -13,10 +14,13 @@ const Layout = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background overflow-x-hidden w-full">
+    <div className="flex flex-col min-h-screen w-full">
+      {isHomePage && (
+        <div className="absolute top-0 left-0 right-0 h-[70vh] bg-gradient-to-b from-black/40 to-transparent z-0"></div>
+      )}
       <Navbar />
-      {/* Padding top ensures content doesn't hide under fixed navbar */}
-      <main className="flex-grow pt-14 md:pt-16 w-full max-w-full overflow-x-hidden">
+      {/* Adjust main content positioning */}
+      <main className={`flex-grow w-full max-w-full overflow-x-hidden ${isHomePage ? '' : 'pt-14 md:pt-16'}`}>
         <Outlet />
       </main>
       <Footer />

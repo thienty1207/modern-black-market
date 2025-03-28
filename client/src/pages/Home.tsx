@@ -20,8 +20,8 @@ const sampleProducts: Product[] = [
     name: "iPhone 13 Pro",
     price: 999,
     originalPrice: 1099,
-    description: "Experience the ultimate iPhone with our most advanced camera system.",
-    features: ["A15 Bionic chip", "Pro camera system", "Up to 28 hours of video playback"],
+    description: "Trải nghiệm iPhone tối ưu với hệ thống camera tiên tiến nhất của chúng tôi.",
+    features: ["Chip A15 Bionic", "Hệ thống camera Pro", "Lên tới 28 giờ xem video"],
     specs: {
       display: "6.1-inch Super Retina XDR",
       chip: "A15 Bionic",
@@ -40,8 +40,8 @@ const sampleProducts: Product[] = [
     id: 2,
     name: "Samsung Galaxy S22 Ultra",
     price: 1199,
-    description: "The ultimate combination of the S series and Note series.",
-    features: ["Dynamic AMOLED 2X display", "108MP wide camera", "S Pen included"],
+    description: "Sự kết hợp tối ưu của dòng S và Note series.",
+    features: ["Màn hình Dynamic AMOLED 2X", "Camera 108MP", "Bút S Pen tích hợp"],
     specs: {
       display: "6.8-inch Dynamic AMOLED 2X",
       chip: "Snapdragon 8 Gen 1",
@@ -60,8 +60,8 @@ const sampleProducts: Product[] = [
     id: 3,
     name: "Google Pixel 6 Pro",
     price: 899,
-    description: "Experience the best of Google with the custom-built Google Tensor processor.",
-    features: ["Google Tensor chip", "50MP wide camera", "Android with Pixel exclusives"],
+    description: "Trải nghiệm tinh hoa Google với bộ vi xử lý Google Tensor được thiết kế riêng.",
+    features: ["Chip Google Tensor", "Camera rộng 50MP", "Android với tính năng độc quyền của Pixel"],
     specs: {
       display: "6.7-inch LTPO OLED",
       chip: "Google Tensor",
@@ -80,8 +80,8 @@ const sampleProducts: Product[] = [
     id: 4,
     name: "MacBook Pro 16",
     price: 2499,
-    description: "Supercharged for pros. The most powerful MacBook Pro ever is here.",
-    features: ["Apple M1 Pro or M1 Max chip", "Up to 64GB unified memory", "Up to 8TB storage"],
+    description: "Hiệu suất vượt trội dành cho các chuyên gia. MacBook Pro mạnh mẽ nhất đã có mặt.",
+    features: ["Chip Apple M1 Pro hoặc M1 Max", "Bộ nhớ thống nhất lên đến 64GB", "Lưu trữ lên đến 8TB"],
     specs: {
       display: "16-inch Liquid Retina XDR",
       chip: "M1 Pro or M1 Max",
@@ -100,8 +100,8 @@ const sampleProducts: Product[] = [
     id: 5,
     name: "Dell XPS 15",
     price: 1799,
-    description: "A stunning 15.6-inch InfinityEdge display in a compact form factor.",
-    features: ["11th Gen Intel Core processors", "NVIDIA GeForce RTX 3050 Ti", "15.6-inch 4K UHD+"],
+    description: "Màn hình InfinityEdge 15,6 inch ấn tượng trong thiết kế nhỏ gọn.",
+    features: ["Bộ vi xử lý Intel Core thế hệ 11", "NVIDIA GeForce RTX 3050 Ti", "Màn hình 4K UHD+ 15,6 inch"],
     specs: {
       display: "15.6-inch 4K UHD+",
       processor: "11th Gen Intel Core i7/i9",
@@ -120,8 +120,8 @@ const sampleProducts: Product[] = [
     id: 6,
     name: "Sony Alpha a7 IV",
     price: 2499,
-    description: "A full-frame hybrid camera with outstanding still image quality.",
-    features: ["33MP full-frame Exmor R CMOS sensor", "BIONZ XR processor", "4K 60p video recording"],
+    description: "Máy ảnh hybrid full-frame với chất lượng hình ảnh tĩnh vượt trội.",
+    features: ["Cảm biến CMOS Exmor R full-frame 33MP", "Bộ xử lý BIONZ XR", "Quay video 4K 60p"],
     specs: {
       sensor: "33MP full-frame Exmor R CMOS",
       processor: "BIONZ XR",
@@ -233,10 +233,10 @@ const Home = () => {
             custom={0}
           >
             <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient mb-4">
-              Featured Categories
+              Danh Mục Nổi Bật
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Explore our premium selection of cutting-edge tech products designed for performance and elegance.
+              Khám phá bộ sưu tập sản phẩm công nghệ cao cấp được thiết kế cho hiệu suất và sự thanh lịch.
             </p>
           </motion.div>
           
@@ -248,8 +248,8 @@ const Home = () => {
             custom={1}
           >
             <FeaturedCategory 
-              title="Premium Smartphones"
-              description="Discover our collection of cutting-edge smartphones featuring advanced cameras, stunning displays, and all-day battery life."
+              title="Điện Thoại Cao Cấp"
+              description="Khám phá bộ sưu tập smartphone tiên tiến với camera hiện đại, màn hình đẹp mắt và pin dùng cả ngày."
               image="https://i.pinimg.com/736x/f8/21/d5/f821d500c6b948e4d32bf0e61eea1b48.jpg"
               link="/products/phones"
             />
@@ -263,8 +263,8 @@ const Home = () => {
             custom={2}
           >
             <FeaturedCategory 
-              title="High-Performance Laptops"
-              description="Unleash your potential with our range of powerful laptops designed for creators, gamers, and professionals alike."
+              title="Laptop Hiệu Năng Cao"
+              description="Khám phá tiềm năng của bạn với các dòng laptop mạnh mẽ được thiết kế cho người sáng tạo, game thủ và chuyên gia."
               image="https://i.pinimg.com/736x/6c/f7/d3/6cf7d3c1aefd776a8c3df0612642d8cb.jpg"
               link="/products/laptops"
               reverse
@@ -279,8 +279,8 @@ const Home = () => {
             custom={3}
           >
             <FeaturedCategory 
-              title="Professional Cameras"
-              description="Capture life's moments with exceptional clarity and detail using our professional-grade cameras and equipment."
+              title="Máy Ảnh Chuyên Nghiệp"
+              description="Ghi lại khoảnh khắc cuộc sống với độ rõ nét và chi tiết đặc biệt bằng thiết bị và máy ảnh chuyên nghiệp."
               image="https://i.pinimg.com/736x/24/e6/53/24e653f589559dc34db312464dbb5036.jpg"
               link="/products/cameras"
             />
@@ -366,7 +366,7 @@ const Home = () => {
                 }
               }}
             >
-              <span className="text-xs font-medium text-accent-foreground">Top Picks</span>
+              <span className="text-xs font-medium text-accent-foreground">Lựa Chọn Hàng Đầu</span>
             </motion.div>
             <motion.h2 
               className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient mb-4"
@@ -383,7 +383,7 @@ const Home = () => {
                 }
               }}
             >
-              Featured Products
+              Sản Phẩm Nổi Bật
             </motion.h2>
             <motion.p 
               className="text-muted-foreground text-lg max-w-2xl mx-auto"
@@ -392,7 +392,7 @@ const Home = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
               viewport={{ once: false }}
             >
-              Explore our selection of premium tech products, crafted with precision and designed for excellence.
+              Khám phá bộ sưu tập sản phẩm công nghệ cao cấp, được chế tác tỉ mỉ và thiết kế đỉnh cao.
             </motion.p>
           </motion.div>
           
@@ -751,7 +751,7 @@ const Home = () => {
                 >
                   <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all">
                     <Link to="/products" className="group">
-                      View All Products
+                      Xem Tất Cả Sản Phẩm
                       <motion.span
                         animate={{ x: [0, 5, 0] }}
                         transition={{ 
@@ -933,7 +933,7 @@ const Home = () => {
               repeatType: "loop"
             }}
           >
-            Experience Premium Technology
+            Trải Nghiệm Công Nghệ Cao Cấp
           </motion.h2>
           
           <motion.p 
@@ -949,7 +949,7 @@ const Home = () => {
             }}
             viewport={{ once: false, amount: 0.6 }}
           >
-            Join thousands of satisfied customers who have elevated their digital experience with our curated selection of premium tech products.
+            Tham gia cùng hàng nghìn khách hàng hài lòng đã nâng cao trải nghiệm kỹ thuật số với bộ sưu tập sản phẩm công nghệ cao cấp của chúng tôi.
           </motion.p>
           
           <motion.div
@@ -968,7 +968,7 @@ const Home = () => {
           >
             <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all">
               <Link to="/products" className="group">
-                Shop Now
+                Mua Ngay
                 <motion.span 
                   className="ml-2 inline-flex items-center"
                   animate={{ x: [0, 5, 0] }}

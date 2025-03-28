@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -66,12 +65,12 @@ const Cart = () => {
   const applyPromo = () => {
     if (promoCode.toLowerCase() === 'save10') {
       setDiscount(10);
-      toast.success('Promo code applied!', {
-        description: '10% discount has been applied to your order.',
+      toast.success('Đã áp dụng mã khuyến mãi!', {
+        description: 'Giảm giá 10% đã được áp dụng cho đơn hàng của bạn.',
       });
     } else {
-      toast.error('Invalid promo code', {
-        description: 'Please enter a valid promo code.',
+      toast.error('Mã khuyến mãi không hợp lệ', {
+        description: 'Vui lòng nhập mã khuyến mãi hợp lệ.',
       });
     }
   };
@@ -81,8 +80,8 @@ const Cart = () => {
   const total = subtotal - discountAmount;
 
   const checkout = () => {
-    toast.success('Order placed successfully!', {
-      description: 'Your order has been placed and will be processed soon.',
+    toast.success('Đặt hàng thành công!', {
+      description: 'Đơn hàng của bạn đã được đặt và sẽ sớm được xử lý.',
     });
   };
 
@@ -97,15 +96,15 @@ const Cart = () => {
         <div className="max-w-4xl mx-auto text-center">
           <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground mb-6" />
           <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient mb-6">
-            Your Cart is Empty
+            Giỏ Hàng Của Bạn Đang Trống
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
-            Looks like you haven't added any products to your cart yet.
+            Có vẻ như bạn chưa thêm sản phẩm nào vào giỏ hàng.
           </p>
           <Button asChild size="lg" className="rounded-full">
             <Link to="/products">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Continue Shopping
+              Tiếp Tục Mua Sắm
             </Link>
           </Button>
         </div>
@@ -123,12 +122,12 @@ const Cart = () => {
       <div className="max-w-6xl mx-auto">
         <motion.div variants={itemVariants} className="flex justify-between items-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient">
-            Your Cart
+            Giỏ Hàng Của Bạn
           </h1>
           <Button variant="ghost" size="sm" asChild className="hover:bg-white/5">
             <Link to="/products">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Continue Shopping
+              Tiếp Tục Mua Sắm
             </Link>
           </Button>
         </motion.div>
@@ -180,7 +179,7 @@ const Cart = () => {
                       onClick={() => removeItem(item.id)}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Remove
+                      Xóa
                     </Button>
                   </div>
                 </div>
@@ -192,30 +191,30 @@ const Cart = () => {
             variants={itemVariants}
             className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 h-fit sticky top-24"
           >
-            <h2 className="text-xl font-medium mb-4">Order Summary</h2>
+            <h2 className="text-xl font-medium mb-4">Tổng Đơn Hàng</h2>
             
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-muted-foreground">Tạm tính</span>
                 <span>${subtotal.toLocaleString()}</span>
               </div>
               
               {discount > 0 && (
                 <div className="flex justify-between text-accent">
-                  <span>Discount ({discount}%)</span>
+                  <span>Giảm giá ({discount}%)</span>
                   <span>-${discountAmount.toLocaleString()}</span>
                 </div>
               )}
               
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span>Free</span>
+                <span className="text-muted-foreground">Phí vận chuyển</span>
+                <span>Miễn phí</span>
               </div>
               
               <Separator className="bg-white/10 my-4" />
               
               <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
+                <span>Tổng cộng</span>
                 <span>${total.toLocaleString()}</span>
               </div>
             </div>
@@ -223,12 +222,12 @@ const Cart = () => {
             <div className="space-y-4">
               <div className="flex gap-2">
                 <Input 
-                  placeholder="Promo code" 
+                  placeholder="Mã khuyến mãi" 
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
                   className="bg-transparent border-white/20"
                 />
-                <Button variant="outline" onClick={applyPromo}>Apply</Button>
+                <Button variant="outline" onClick={applyPromo}>Áp dụng</Button>
               </div>
               
               <Button 
@@ -237,12 +236,12 @@ const Cart = () => {
                 onClick={checkout}
               >
                 <CreditCard className="mr-2 h-4 w-4" />
-                Checkout
+                Thanh Toán
               </Button>
               
               <div className="text-xs text-center text-muted-foreground mt-4">
-                <p>Secure checkout powered by Stripe</p>
-                <p className="mt-1">Free shipping on all orders</p>
+                <p>Thanh toán an toàn qua Stripe</p>
+                <p className="mt-1">Miễn phí vận chuyển cho tất cả đơn hàng</p>
               </div>
             </div>
           </motion.div>

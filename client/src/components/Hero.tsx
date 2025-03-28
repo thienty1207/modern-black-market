@@ -11,21 +11,21 @@ const Hero = () => {
   
   const slides = [
     {
-      title: "Experience Next-Gen Technology",
-      subtitle: "Discover the ultimate smartphone experience with our premium selection.",
+      title: "Trải nghiệm công nghệ thế hệ tiên tiến",
+      subtitle: "Khám phá trải nghiệm điện thoại thông minh tối ưu với bộ sưu tập cao cấp của chúng tôi.",
       image: "https://i.pinimg.com/736x/3b/40/1c/3b401ceb37213d3409fb4d8d392204db.jpg",
       
       category: "phones",
     },
     {
-      title: "Premium Laptops",
-      subtitle: "Elevate your productivity with cutting-edge laptops crafted for performance.",
+      title: "Laptop cao cấp",
+      subtitle: "Nâng cao năng suất với laptop tiên tiến được thiết kế cho hiệu suất tối đa.",
       image: "https://i.pinimg.com/736x/93/f3/3b/93f33b7601e66c855fba70236a44bfce.jpg",
       category: "laptops",
     },
     {
-      title: "Capture Every Moment",
-      subtitle: "Professional-grade cameras for breathtaking photography.",
+      title: "Chụp hình chuyên nghiệp",
+      subtitle: "Máy ảnh chuyên nghiệp cho những bức ảnh đẹp đến nghẹt thở.",
       image: "https://i.pinimg.com/736x/98/41/14/984114ef32b30662c99df033eac71123.jpg",
       category: "cameras",
     },
@@ -123,7 +123,7 @@ const Hero = () => {
                 onClick={() => handleShopNowClick(slide.category)}
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-accent to-accent/50 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-                Shop Now
+                  Mua Ngay
                 <motion.span
                   className="ml-2 inline-flex items-center"
                   animate={{ x: [0, 5, 0] }}
@@ -139,7 +139,7 @@ const Hero = () => {
                 onClick={handleExploreAllClick}
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-                Explore All
+                Khám Phá Tất Cả
               </Button>
             </motion.div>
 

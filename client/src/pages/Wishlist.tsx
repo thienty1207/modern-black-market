@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -36,7 +35,7 @@ const Wishlist = () => {
         setWishlistItems(wishlistProducts);
       } catch (error) {
         console.error('Failed to load wishlist:', error);
-        toast.error('Failed to load your wishlist');
+        toast.error('Không thể tải danh sách yêu thích');
       } finally {
         setIsLoading(false);
       }
@@ -54,12 +53,12 @@ const Wishlist = () => {
     const updatedWishlist = savedWishlistIds.filter((id: number) => id !== productId);
     localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
     
-    toast.success('Removed from wishlist');
+    toast.success('Đã xóa khỏi danh sách yêu thích');
   };
 
   const handleAddToCart = (product: Product) => {
     // Giả lập thêm vào giỏ hàng
-    toast.success(`${product.name} added to cart`);
+    toast.success(`${product.name} đã thêm vào giỏ hàng`);
     
     // Trong thực tế, bạn sẽ cập nhật giỏ hàng trong localStorage hoặc state
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -106,13 +105,13 @@ const Wishlist = () => {
           variants={itemVariants}
         >
           <div className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4">
-            <span className="text-xs font-medium text-accent-foreground">Your Wishlist</span>
+            <span className="text-xs font-medium text-accent-foreground">Danh Sách Yêu Thích</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-gradient mb-6">
-            Saved Items
+            Sản Phẩm Đã Lưu
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Keep track of products you love and want to purchase later.
+            Theo dõi các sản phẩm bạn yêu thích và muốn mua sau này.
           </p>
         </motion.div>
         
@@ -154,7 +153,7 @@ const Wishlist = () => {
                       <div className="flex gap-3">
                         <Button onClick={() => handleAddToCart(item)}>
                           <ShoppingCart className="h-4 w-4 mr-2" />
-                          Add to Cart
+                          Thêm Vào Giỏ
                         </Button>
                         <Button 
                           variant="outline" 
@@ -170,7 +169,7 @@ const Wishlist = () => {
                         className="border-white/20" 
                         onClick={() => navigate(`/product/${item.id}`)}
                       >
-                        View Details
+                        Xem Chi Tiết
                       </Button>
                     </div>
                   </div>
@@ -184,10 +183,10 @@ const Wishlist = () => {
             className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
           >
             <Heart className="w-16 h-16 mx-auto mb-6 text-muted-foreground" />
-            <h3 className="text-xl font-medium mb-2">Your wishlist is empty</h3>
-            <p className="text-muted-foreground mb-8">Start adding items you love to your wishlist</p>
+            <h3 className="text-xl font-medium mb-2">Danh sách yêu thích trống</h3>
+            <p className="text-muted-foreground mb-8">Hãy bắt đầu thêm các sản phẩm bạn yêu thích vào danh sách</p>
             <Button onClick={() => navigate('/products')}>
-              Browse Products
+              Duyệt Sản Phẩm
             </Button>
           </motion.div>
         )}

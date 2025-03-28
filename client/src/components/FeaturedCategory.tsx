@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -119,7 +118,7 @@ const FeaturedCategory = ({
             <Button asChild size="lg" className="mt-4 rounded-full group relative overflow-hidden">
               <Link to={link}>
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-accent to-accent/50 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-                Discover
+                Khám Phá
                 <motion.span
                   className="ml-2 inline-flex items-center"
                   animate={{ x: [0, 5, 0] }}

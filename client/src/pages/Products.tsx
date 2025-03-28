@@ -10,10 +10,10 @@ import { Search, SlidersHorizontal, RefreshCw } from 'lucide-react';
 import Pagination from '@/components/ui/pagination';
 
 const Categories = [
-  { id: 'all', name: 'All Products' },
-  { id: 'phones', name: 'Phones' },
-  { id: 'laptops', name: 'Laptops' },
-  { id: 'cameras', name: 'Cameras' },
+  { id: 'all', name: 'Tất Cả Sản Phẩm' },
+  { id: 'phones', name: 'Điện Thoại' },
+  { id: 'laptops', name: 'Laptop' },
+  { id: 'cameras', name: 'Máy Ảnh' },
 ];
 
 const ITEMS_PER_PAGE = 5;
@@ -542,13 +542,13 @@ const Products = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4">
-            <span className="text-xs font-medium text-accent-foreground">Our Collection</span>
+            <span className="text-xs font-medium text-accent-foreground">Bộ Sưu Tập Của Chúng Tôi</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-gradient mb-6">
             {categoryTitle}
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Explore our curated selection of premium tech products, designed with precision and built for excellence.
+            Khám phá bộ sưu tập sản phẩm công nghệ cao cấp được tuyển chọn, được thiết kế tỉ mỉ và chế tạo xuất sắc.
           </p>
         </div>
         
@@ -565,7 +565,7 @@ const Products = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder="Tìm kiếm sản phẩm..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-10 py-2 bg-black/60 border border-white/20 rounded-md focus-visible:ring-accent"
@@ -589,11 +589,11 @@ const Products = () => {
                   onChange={(e) => handleSortChange(e.target.value)}
                   className="w-full py-2 pl-4 pr-10 bg-black/60 text-white border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-accent appearance-none cursor-pointer"
                 >
-                  <option value="default">Default</option>
-                  <option value="newest">Newest</option>
-                  <option value="popular">Most Popular</option>
-                  <option value="priceHighToLow">Price: High to Low</option>
-                  <option value="priceLowToHigh">Price: Low to High</option>
+                  <option value="default">Mặc Định</option>
+                  <option value="newest">Mới Nhất</option>
+                  <option value="popular">Phổ Biến Nhất</option>
+                  <option value="priceHighToLow">Giá: Cao đến Thấp</option>
+                  <option value="priceLowToHigh">Giá: Thấp đến Cao</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -609,10 +609,10 @@ const Products = () => {
             {sortOption !== 'default' && (
               <div className="px-3 py-1 rounded-full bg-accent/20 text-xs flex items-center">
                 <span className="mr-2">
-                  {sortOption === 'newest' ? 'Newest' : 
-                   sortOption === 'popular' ? 'Most Popular' : 
-                   sortOption === 'priceHighToLow' ? 'Price: High to Low' :
-                   'Price: Low to High'}
+                  {sortOption === 'newest' ? 'Mới Nhất' : 
+                   sortOption === 'popular' ? 'Phổ Biến Nhất' : 
+                   sortOption === 'priceHighToLow' ? 'Giá: Cao đến Thấp' :
+                   'Giá: Thấp đến Cao'}
                 </span>
                 <button onClick={() => handleSortChange('default')}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -624,7 +624,7 @@ const Products = () => {
             
             {searchTerm.trim() && (
               <div className="px-3 py-1 rounded-full bg-accent/20 text-xs flex items-center">
-                <span className="mr-2">Search: {searchTerm}</span>
+                <span className="mr-2">Tìm kiếm: {searchTerm}</span>
                 <button onClick={() => {
                   setSearchTerm('');
                   // Xử lý tương tự như handleSearch nhưng với searchTerm rỗng
@@ -686,7 +686,7 @@ const Products = () => {
                 }}
                 className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs"
               >
-                Reset filters
+                Đặt lại bộ lọc
               </button>
             )}
           </div>
@@ -704,8 +704,8 @@ const Products = () => {
           </div>
         ) : (
           <div className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-            <h3 className="text-xl font-medium mb-2">No products found</h3>
-            <p className="text-muted-foreground">Try adjusting your filters or selecting a different category</p>
+            <h3 className="text-xl font-medium mb-2">Không tìm thấy sản phẩm</h3>
+            <p className="text-muted-foreground">Hãy điều chỉnh bộ lọc hoặc chọn danh mục khác</p>
             <Button 
               variant="outline" 
               className="mt-4"
@@ -716,7 +716,7 @@ const Products = () => {
               }}
             >
               <RefreshCw className="mr-2 h-4 w-4" />
-              Reload Products
+              Tải Lại Sản Phẩm
             </Button>
           </div>
         )}

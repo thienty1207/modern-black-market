@@ -60,8 +60,8 @@ const ProductCard = ({ id, name, price, image, category, className }: ProductCar
     // Kích hoạt sự kiện để cập nhật giỏ hàng trong navbar
     window.dispatchEvent(new Event('storage'));
     
-    toast.success('Added to cart', {
-      description: `${name} has been added to your cart.`,
+    toast.success('Đã thêm vào giỏ hàng', {
+      description: `${name} đã được thêm vào giỏ hàng của bạn.`,
     });
   };
   
@@ -75,12 +75,12 @@ const ProductCard = ({ id, name, price, image, category, className }: ProductCar
     if (isInWishlist) {
       // Xóa khỏi wishlist
       newWishlist = savedWishlist.filter((itemId: number) => itemId !== id);
-      toast.success('Removed from wishlist');
+      toast.success('Đã xóa khỏi danh sách yêu thích');
     } else {
       // Thêm vào wishlist
       newWishlist = [...savedWishlist, id];
-      toast.success('Added to wishlist', {
-        description: `${name} has been added to your wishlist.`,
+      toast.success('Đã thêm vào danh sách yêu thích', {
+        description: `${name} đã được thêm vào danh sách yêu thích của bạn.`,
       });
     }
     
