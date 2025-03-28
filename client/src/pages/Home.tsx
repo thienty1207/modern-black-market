@@ -250,7 +250,7 @@ const Home = () => {
             <FeaturedCategory 
               title="Premium Smartphones"
               description="Discover our collection of cutting-edge smartphones featuring advanced cameras, stunning displays, and all-day battery life."
-              image="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+              image="https://i.pinimg.com/736x/f8/21/d5/f821d500c6b948e4d32bf0e61eea1b48.jpg"
               link="/products/phones"
             />
           </motion.div>
@@ -265,7 +265,7 @@ const Home = () => {
             <FeaturedCategory 
               title="High-Performance Laptops"
               description="Unleash your potential with our range of powerful laptops designed for creators, gamers, and professionals alike."
-              image="https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+              image="https://i.pinimg.com/736x/6c/f7/d3/6cf7d3c1aefd776a8c3df0612642d8cb.jpg"
               link="/products/laptops"
               reverse
             />
@@ -281,7 +281,7 @@ const Home = () => {
             <FeaturedCategory 
               title="Professional Cameras"
               description="Capture life's moments with exceptional clarity and detail using our professional-grade cameras and equipment."
-              image="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+              image="https://i.pinimg.com/736x/24/e6/53/24e653f589559dc34db312464dbb5036.jpg"
               link="/products/cameras"
             />
           </motion.div>
@@ -358,12 +358,12 @@ const Home = () => {
                   "0 0 0 rgba(180, 132, 253, 0.2)",
                   "0 0 15px rgba(180, 132, 253, 0.5)",
                   "0 0 0 rgba(180, 132, 253, 0.2)"
-                ]
-              }}
-              transition={{ 
-                duration: 3, 
-                repeat: Infinity,
-                repeatType: "reverse" 
+                ],
+                transition: {
+                  duration: 3, 
+                  repeat: Infinity,
+                  repeatType: "reverse" 
+                }
               }}
             >
               <span className="text-xs font-medium text-accent-foreground">Top Picks</span>
@@ -375,12 +375,12 @@ const Home = () => {
               transition={{ delay: 0.3, duration: 0.6 }}
               viewport={{ once: false }}
               animate={{
-                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                repeatType: "loop"
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                transition: {
+                  duration: 8,
+                  repeat: Infinity,
+                  repeatType: "loop"
+                }
               }}
             >
               Featured Products
@@ -510,11 +510,11 @@ const Home = () => {
                         console.log('Carousel drag ended');
                       }}
                     >
-                      <CarouselContent className="-ml-2 md:-ml-4">
+                      <CarouselContent className="-ml-2 md:-ml-4 p-2">
                         {featuredProducts.map((product, index) => (
                           <CarouselItem 
                             key={product.id} 
-                            className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3 xl:basis-1/4"
+                            className="pl-4 pr-4 pt-4 pb-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3 xl:basis-1/4"
                           >
                             <motion.div 
                               className="h-full"
@@ -535,30 +535,27 @@ const Home = () => {
                                 }
                               }}
                               viewport={{ once: false, margin: "-50px" }}
-                              whileHover={{ 
-                                scale: 1.05,
-                                y: -10,
-                                boxShadow: "0 20px 30px rgba(0, 0, 0, 0.2)",
-                                transition: { duration: 0.3, ease: "easeOut" }
-                              }}
-                              animate={{
-                                y: [0, -6, 0],
+                              animate={{ 
+                                opacity: 1,
                                 boxShadow: [
                                   "0 10px 20px -15px rgba(0, 0, 0, 0.2)",
                                   "0 15px 30px -10px rgba(180, 132, 253, 0.3)",
                                   "0 10px 20px -15px rgba(0, 0, 0, 0.2)"
-                                ]
+                                ] 
                               }}
                               transition={{
-                                duration: 3 + index * 0.2,
-                                repeat: Infinity,
-                                repeatType: "reverse",
-                                ease: "easeInOut"
+                                opacity: { duration: 0.5 },
+                                boxShadow: {
+                                  duration: 3 + index * 0.2,
+                                  repeat: Infinity,
+                                  repeatType: "reverse",
+                                  ease: "easeInOut"
+                                }
                               }}
                             >
                               {/* Card content wrapper */}
                               <motion.div
-                                className="relative h-full overflow-hidden rounded-xl"
+                                className="relative h-full overflow-visible rounded-xl" 
                                 animate={{ 
                                   boxShadow: [
                                     "0 5px 15px rgba(0,0,0,0.1)",
@@ -577,6 +574,12 @@ const Home = () => {
                                   repeatType: "reverse",
                                   delay: index * 0.2
                                 }}
+                                whileHover={{ 
+                                  scale: 1.05,
+                                  boxShadow: "0 20px 30px rgba(0, 0, 0, 0.2)",
+                                  transition: { duration: 0.3, ease: "easeOut" }
+                                }}
+                                style={{ padding: "10px" }}
                               >
                                 {/* Shine effect */}
                                 <motion.div
@@ -598,7 +601,7 @@ const Home = () => {
                                   price={product.price}
                                   image={product.images[0]} 
                                   category={product.category}
-                                  className="h-full transform transition-all duration-300 hover:shadow-2xl relative z-20"
+                                  className="h-full transform transition-all duration-300 relative z-20"
                                 />
                               </motion.div>
                             </motion.div>
@@ -746,7 +749,7 @@ const Home = () => {
                     }
                   }}
                 >
-                  <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 hover:scale-105 transition-all">
+                  <Button asChild size="lg" className="rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all">
                     <Link to="/products" className="group">
                       View All Products
                       <motion.span

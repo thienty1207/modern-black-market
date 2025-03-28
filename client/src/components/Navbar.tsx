@@ -144,7 +144,7 @@ const Navbar = () => {
           {/* Logo - Luôn hiển thị */}
           <Link to="/" className="flex-shrink-0 z-10">
             <h1 className="text-lg sm:text-xl md:text-2xl font-display font-bold tracking-tight">
-              <span className="text-gradient">TECHSHOP</span>
+              <span className="text-gradient">Thien Ty Shop</span>
             </h1>
           </Link>
 

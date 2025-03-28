@@ -12,6 +12,9 @@ export interface Product {
   images: string[];
   category: string;
   featured?: boolean;
+  updatedAt?: string;
+  createdAt?: string;
+  salesCount?: number;
 }
 
 // Mock products data

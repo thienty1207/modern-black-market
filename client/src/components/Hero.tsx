@@ -13,19 +13,20 @@ const Hero = () => {
     {
       title: "Experience Next-Gen Technology",
       subtitle: "Discover the ultimate smartphone experience with our premium selection.",
-      image: "https://i.pinimg.com/736x/23/6f/11/236f1130cc4965656e4d68349f703ef1.jpg",
+      image: "https://i.pinimg.com/736x/3b/40/1c/3b401ceb37213d3409fb4d8d392204db.jpg",
+      
       category: "phones",
     },
     {
       title: "Premium Laptops",
       subtitle: "Elevate your productivity with cutting-edge laptops crafted for performance.",
-      image: "https://i.pinimg.com/736x/3b/40/1c/3b401ceb37213d3409fb4d8d392204db.jpg",
+      image: "https://i.pinimg.com/736x/93/f3/3b/93f33b7601e66c855fba70236a44bfce.jpg",
       category: "laptops",
     },
     {
       title: "Capture Every Moment",
       subtitle: "Professional-grade cameras for breathtaking photography.",
-      image: "https://i.pinimg.com/736x/51/f1/07/51f107561840feac4727b64981703204.jpg",
+      image: "https://i.pinimg.com/736x/98/41/14/984114ef32b30662c99df033eac71123.jpg",
       category: "cameras",
     },
   ];
