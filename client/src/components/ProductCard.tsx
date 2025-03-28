@@ -102,12 +102,12 @@ const ProductCard = ({ id, name, price, image, category, className }: ProductCar
           className
         )}
       >
-        {/* Eye and Heart buttons that stay in fixed positions */}
-        <div className="absolute inset-0 z-30">
+        {/* Buttons that stay in fixed positions with higher z-index */}
+        <div className="absolute inset-0 z-30 pointer-events-none">
           {/* Wishlist Button (Always visible) */}
           <button
             onClick={toggleWishlist}
-            className="absolute top-2 right-2 p-2 rounded-full bg-black/70 hover:bg-accent transition-all duration-300 shadow-md"
+            className="absolute top-2 right-2 p-2 rounded-full bg-black/70 hover:bg-accent transition-all duration-300 shadow-md pointer-events-auto"
             aria-label={isInWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
           >
             <Heart 
@@ -120,7 +120,7 @@ const ProductCard = ({ id, name, price, image, category, className }: ProductCar
 
           {/* Detail button (Eye icon) */}
           <div className={cn(
-            "absolute top-2 left-2",
+            "absolute top-2 left-2 pointer-events-auto",
             isMobile 
               ? "opacity-100" 
               : "opacity-0 group-hover:opacity-100 duration-300"
@@ -138,37 +138,41 @@ const ProductCard = ({ id, name, price, image, category, className }: ProductCar
           </div>
         </div>
 
-        <Link to={`/product/${id}`} className="block">
-          <div className="aspect-square overflow-hidden">
-            <img 
-              src={image} 
-              alt={name} 
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-              loading="lazy"
-            />
-          </div>
-          
-          <div className="p-3 sm:p-4">
-            <div className="flex flex-col">
-              <span className="text-[10px] sm:text-xs uppercase tracking-wider text-accent/80 block truncate">{category}</span>
-              <h3 className="mt-1 text-sm sm:text-base font-medium leading-tight line-clamp-2 group-hover:text-accent transition-colors">{name}</h3>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-base sm:text-lg font-semibold">{formatCurrency(price)}</span>
-                
-                {/* Cart button beside price */}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-8 w-8 p-0 rounded-full bg-black/40 hover:bg-accent hover:text-white text-white"
-                  onClick={handleAddToCart}
-                  aria-label="Add to cart"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                </Button>
+        <div className="relative">
+          <Link to={`/product/${id}`} className="block">
+            <div className="aspect-square overflow-hidden">
+              <img 
+                src={image} 
+                alt={name} 
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+              />
+            </div>
+            
+            <div className="p-3 sm:p-4">
+              <div className="flex flex-col">
+                <span className="text-[10px] sm:text-xs uppercase tracking-wider text-accent/80 block truncate">{category}</span>
+                <h3 className="mt-1 text-sm sm:text-base font-medium leading-tight line-clamp-2 group-hover:text-accent transition-colors">{name}</h3>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-base sm:text-lg font-semibold">{formatCurrency(price)}</span>
+                </div>
               </div>
             </div>
+          </Link>
+          
+          {/* Cart button - Now outside of the Link component with higher z-index */}
+          <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 z-40">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 w-8 p-0 rounded-full bg-black/40 hover:bg-accent hover:text-white text-white shadow-md"
+              onClick={handleAddToCart}
+              aria-label="Thêm vào giỏ hàng"
+            >
+              <ShoppingCart className="h-4 w-4" />
+            </Button>
           </div>
-        </Link>
+        </div>
       </div>
     </div>
   );
