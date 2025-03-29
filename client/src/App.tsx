@@ -30,13 +30,6 @@ const App = () => {
       .glow-purple {
         box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
       }
-      
-      /* Đảm bảo apple icon luôn sáng */
-      .cl-socialButtonsIconButton[data-provider="apple"] {
-        color: white !important;
-        border: 1px solid rgba(139, 92, 246, 0.8) !important;
-        box-shadow: 0 0 10px rgba(139, 92, 246, 0.6) !important;
-      }
     `;
     document.head.appendChild(style);
   }, []);

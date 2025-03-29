@@ -171,3 +171,6 @@ Orders.user_id -> UserProfiles.id
 Wishlist.user_id -> UserProfiles.id
 Reviews.user_id -> UserProfiles.id
 Cart.user_id -> UserProfiles.id
+
+
+
