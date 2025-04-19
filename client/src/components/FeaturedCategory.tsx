@@ -24,7 +24,7 @@ const FeaturedCategory = ({
 }: FeaturedCategoryProps) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { 
-    once: false,
+    once: true,
     amount: 0.2,
     margin: "-100px 0px" 
   });

@@ -3,6 +3,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { Toaster } from 'sonner';
+import { SignedIn } from "@clerk/clerk-react";
+import { motion } from "framer-motion";
 
 const Layout = () => {
   const location = useLocation();

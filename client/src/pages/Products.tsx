@@ -1,13 +1,32 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import ProductGrid from '@/components/ProductGrid';
-import { getProducts, getProductsByCategory, Product, formatCurrency } from '@/services/productService';
+// import { useProducts, useProductsByCategory, Product, formatCurrency } from '@/services/productService'; // Tạm vô hiệu hóa
+import { formatCurrency } from '@/services/productService'; // Giữ lại formatCurrency nếu cần
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Search, SlidersHorizontal, RefreshCw } from 'lucide-react';
+import { Search, SlidersHorizontal, RefreshCw, Loader2 } from 'lucide-react';
 import Pagination from '@/components/ui/pagination';
+import { ChevronUp, ChevronDown } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+
+// Định nghĩa lại kiểu Product nếu cần (vì đã comment import ở trên)
+interface Product {
+  id: number | string;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  description: string;
+  features?: string[];
+  specs?: Record<string, string>;
+  images: string[];
+  category: string;
+  featured?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+}
 
 const Categories = [
   { id: 'all', name: 'Tất Cả Sản Phẩm' },
@@ -249,127 +268,82 @@ const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>(category || 'all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [userChangedPage, setUserChangedPage] = useState(false);
-  const [sortOption, setSortOption] = useState<string>("default"); // default, newest, popular
+  const [sortOption, setSortOption] = useState<string>("default");
+  const [activeCategory, setActiveCategory] = useState<string>(category || 'all');
+  
+  // Tạm thời vô hiệu hóa các hook gọi API
+  // const { 
+  //   data: allProducts = [], 
+  //   isLoading: isLoadingAll,
+  //   refetch: refetchAll
+  // } = useProducts();
+  
+  // const {
+  //   data: categoryProducts = [],
+  //   isLoading: isLoadingCategory,
+  //   refetch: refetchCategory
+  // } = useProductsByCategory(activeCategory === 'all' ? '' : activeCategory);
+  
+  // Luôn sử dụng dữ liệu mẫu
+  const products = directProducts; // Luôn dùng directProducts
+  const isLoading = false; // Giả định không loading
+  
+  // Lọc theo category nếu không phải 'all'
+  const categoryFilteredProducts = useMemo(() => {
+      if (activeCategory === 'all') return products;
+      return products.filter(p => p.category === activeCategory);
+  }, [activeCategory, products]);
 
-  // SIMPLE DIRECT LOADING FUNCTION - NO CACHE SYSTEM
-  const loadProducts = useCallback((selectedCategory: string, preservePage = false) => {
-    // First, immediately set some products to display - directly from the fallback data
-    const immediateProducts = selectedCategory === 'all' 
-      ? directProducts 
-      : directProducts.filter(p => p.category === selectedCategory);
-      
-    setProducts(immediateProducts);
-    setFilteredProducts(immediateProducts);
-    setTotalPages(Math.ceil(immediateProducts.length / ITEMS_PER_PAGE));
+  // Tìm kiếm và lọc sản phẩm từ categoryFilteredProducts
+  const filteredProducts = useMemo(() => {
+    if (!categoryFilteredProducts.length) return [];
     
-    // This ensures we have something to display immediately
-    const pageToUse = preservePage ? currentPage : 1;
-    const startIndex = (pageToUse - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
+    let result = [...categoryFilteredProducts];
     
-    if (!preservePage) {
-      setCurrentPage(1);
+    if (searchTerm) {
+      result = result.filter(product => {
+        return product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               product.description.toLowerCase().includes(searchTerm.toLowerCase());
+      });
     }
     
-    setDisplayedProducts(immediateProducts.slice(startIndex, endIndex));
-    
-    // Then set loading to false after a small delay to ensure UI updates
-    setIsLoading(false);
-  }, [currentPage]);
-
-  // Handle category change from button clicks
+    return sortProducts(result, sortOption);
+  }, [categoryFilteredProducts, searchTerm, sortOption]);
+  
+  // Tính toán số trang
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  
+  // Phân trang
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage]);
+  
+  // Thay đổi category
   const handleCategoryChange = useCallback((categoryId: string) => {
     setActiveCategory(categoryId);
     setSearchTerm('');
     setSortOption('default');
-    setUserChangedPage(false);
+    setCurrentPage(1);
     
-    // Update URL
+    // Cập nhật URL
     if (categoryId === 'all') {
       navigate('/products', { replace: true });
     } else {
       navigate(`/products/${categoryId}`, { replace: true });
     }
-    
-    // Set loading state and load products
-    setIsLoading(true);
-    setTimeout(() => {
-      loadProducts(categoryId, false);
-    }, 10);
-  }, [navigate, loadProducts]);
-
-  // Handle initial load and URL changes
+  }, [navigate]);
+  
+  // Cập nhật activeCategory khi URL thay đổi
   useEffect(() => {
     const currentCategory = category || 'all';
-    
-    // Only reset page if category changed
-    const categoryChanged = currentCategory !== activeCategory;
-    
     setActiveCategory(currentCategory);
-    
-    // Reset filters but not page if user manually changed page
-    setSearchTerm('');
-    setSortOption('default');
-    
-    if (categoryChanged) {
-      setUserChangedPage(false);
-    }
-    
-    // Set loading state and load products
-    setIsLoading(true);
-    setTimeout(() => {
-      loadProducts(currentCategory, !categoryChanged && userChangedPage);
-    }, 10);
-  }, [category, loadProducts, activeCategory, userChangedPage]);
-
-  // Filter products when search changes
-  useEffect(() => {
-    if (products.length === 0) return;
-    
-    const filtered = products.filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          product.description.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      return matchesSearch;
-    });
-    
-    // Apply sorting if needed
-    const sortedFiltered = sortProducts(filtered, sortOption);
-    
-    setFilteredProducts(sortedFiltered);
-    
-    // Update pagination
-    const newTotalPages = Math.ceil(sortedFiltered.length / ITEMS_PER_PAGE);
-    setTotalPages(newTotalPages);
-    
-    // Reset to page 1 if current page is now out of bounds
-    if (currentPage > newTotalPages && newTotalPages > 0) {
-      setCurrentPage(1);
-      setUserChangedPage(false);
-    }
-  }, [products, searchTerm, sortOption]); // Added sortOption to dependencies
-
-  // Update displayed products when page or filtered products change
-  useEffect(() => {
-    if (filteredProducts.length === 0) {
-      setDisplayedProducts([]);
-      return;
-    }
-    
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    setDisplayedProducts(filteredProducts.slice(startIndex, endIndex));
-  }, [filteredProducts, currentPage]);
+    setCurrentPage(1);
+  }, [category]);
 
   // Toggle filter visibility (mobile)
   const toggleFilter = useCallback(() => {
@@ -380,7 +354,6 @@ const Products = () => {
   const handlePageChange = useCallback((page: number) => {
     console.log("Changing to page:", page);
     setCurrentPage(page);
-    setUserChangedPage(true);
     // Scroll to top when changing pages
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -392,80 +365,56 @@ const Products = () => {
   }, [activeCategory]);
 
   // Memoized components
-  const categoryButtons = useMemo(() => {
-    return Categories.map((cat) => (
-      <Button
-        key={cat.id}
-        variant={activeCategory === cat.id ? "default" : "outline"}
-        onClick={() => handleCategoryChange(cat.id)}
-        className="rounded-full transition-all"
-      >
-        {cat.name}
-      </Button>
-    ));
-  }, [activeCategory, handleCategoryChange]);
+  const categoryButtons = useMemo(() => (
+    <div className="overflow-x-auto whitespace-nowrap pb-3 scrollbar-thin">
+      <div className="inline-flex space-x-2">
+        {[{ id: 'all', name: 'Tất cả' }, ...Categories].map((cat) => (
+          <Button
+            key={cat.id}
+            variant={activeCategory === cat.id ? "default" : "outline"}
+            onClick={() => handleCategoryChange(cat.id)}
+            className={`rounded-full px-4 py-2 text-sm ${
+              activeCategory === cat.id ? "bg-primary text-primary-foreground" : ""
+            }`}
+          >
+            {cat.name}
+          </Button>
+        ))}
+      </div>
+    </div>
+  ), [activeCategory, handleCategoryChange]);
 
   // Pagination component
-  const paginationComponent = useMemo(() => {
-    if (!filteredProducts.length) return null;
-    
-    return (
-      <div className="mt-8">
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-        <div className="text-center mt-4 text-sm text-muted-foreground">
-          Showing {Math.min(filteredProducts.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} to {Math.min(filteredProducts.length, currentPage * ITEMS_PER_PAGE)} of {filteredProducts.length} products
-        </div>
-      </div>
-    );
-  }, [filteredProducts.length, currentPage, totalPages, handlePageChange]);
+  const paginationComponent = useMemo(() => (
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={handlePageChange}
+    />
+  ), [currentPage, totalPages, handlePageChange]);
 
   // Log current state for debugging
-  console.log("Current state:", { currentPage, totalPages, userChangedPage, activeCategory });
+  console.log("Current state:", { currentPage, totalPages, activeCategory });
 
   // Hàm xử lý sắp xếp sản phẩm
-  const sortProducts = useCallback((products: Product[], option: string) => {
-    let sorted = [...products];
+  function sortProducts(products: Product[], option: string) {
+    const sorted = [...products];
     
-    switch(option) {
-      case "newest":
-        // Sắp xếp theo ngày cập nhật mới nhất
-        sorted = sorted.sort((a, b) => {
-          const dateA = new Date(a.updatedAt || a.createdAt || "").getTime();
-          const dateB = new Date(b.updatedAt || b.createdAt || "").getTime();
-          return dateB - dateA; // Mới nhất đến cũ nhất
+    switch (option) {
+      case 'newest':
+        return sorted.sort((a, b) => {
+          const dateA = a.updatedAt || a.createdAt || new Date(0);
+          const dateB = b.updatedAt || b.createdAt || new Date(0);
+          return new Date(dateB).getTime() - new Date(dateA).getTime();
         });
-        break;
-      case "oldest":
-        // Sắp xếp theo ngày cập nhật cũ nhất
-        sorted = sorted.sort((a, b) => {
-          const dateA = new Date(a.updatedAt || a.createdAt || "").getTime();
-          const dateB = new Date(b.updatedAt || b.createdAt || "").getTime();
-          return dateA - dateB; // Cũ nhất đến mới nhất
-        });
-        break;
-      case "popular":
-        // Sắp xếp theo lượt mua nhiều nhất
-        sorted = sorted.sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0));
-        break;
-      case "priceHighToLow":
-        // Sắp xếp theo giá từ cao đến thấp
-        sorted = sorted.sort((a, b) => b.price - a.price);
-        break;
-      case "priceLowToHigh":
-        // Sắp xếp theo giá từ thấp đến cao
-        sorted = sorted.sort((a, b) => a.price - b.price);
-        break;
+      case 'price-low':
+        return sorted.sort((a, b) => a.price - b.price);
+      case 'price-high':
+        return sorted.sort((a, b) => b.price - a.price);
       default:
-        // Giữ nguyên thứ tự mặc định
-        break;
+        return sorted; // Default sorting (could be by relevance or featured)
     }
-    
-    return sorted;
-  }, []);
+  }
 
   // Cập nhật hàm handleSearch để kết hợp với chức năng lọc
   const handleSearch = useCallback((e: React.FormEvent) => {
@@ -537,199 +486,92 @@ const Products = () => {
   }, [filteredProducts, sortProducts, currentPage]);
 
   return (
-    <div className="pt-24 pb-20 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4">
-            <span className="text-xs font-medium text-accent-foreground">Bộ Sưu Tập Của Chúng Tôi</span>
-          </div>
-          <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-gradient mb-6">
-            {categoryTitle}
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Khám phá bộ sưu tập sản phẩm công nghệ cao cấp được tuyển chọn, được thiết kế tỉ mỉ và chế tạo xuất sắc.
-          </p>
-        </div>
-        
-        {/* Category Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
+    <div className="container py-8">
+      <h1 className="text-3xl font-bold mb-6">Sản phẩm</h1>
+      
+      {/* Mobile Filter Toggle */}
+      <div className="block md:hidden mb-4">
+        <Button 
+          onClick={() => setIsFilterOpen(!isFilterOpen)}
+          variant="outline"
+          className="w-full flex items-center justify-between"
+        >
+          <span>Bộ lọc & Danh mục</span>
+          {isFilterOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </Button>
+      </div>
+      
+      {/* Filters Section - Hidden on mobile unless toggled */}
+      <div className={`${isFilterOpen ? 'block' : 'hidden'} md:block mb-6`}>
+        {/* Categories */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Danh mục</h2>
           {categoryButtons}
         </div>
         
-        {/* Filters */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row items-center gap-3 justify-between bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-            <div className="relative w-full sm:w-2/3 md:w-3/4 mb-3 sm:mb-0">
-              <form onSubmit={handleSearch} className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm sản phẩm..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2 bg-black/60 border border-white/20 rounded-md focus-visible:ring-accent"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-white"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
-              </form>
-            </div>
-            
-            <div className="relative w-full sm:w-1/3 md:w-1/4">
-              <div className="relative">
-                <select
-                  id="sort-options"
-                  value={sortOption}
-                  onChange={(e) => handleSortChange(e.target.value)}
-                  className="w-full py-2 pl-4 pr-10 bg-black/60 text-white border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-accent appearance-none cursor-pointer"
-                >
-                  <option value="default">Mặc Định</option>
-                  <option value="newest">Mới Nhất</option>
-                  <option value="popular">Phổ Biến Nhất</option>
-                  <option value="priceHighToLow">Giá: Cao đến Thấp</option>
-                  <option value="priceLowToHigh">Giá: Thấp đến Cao</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-              
-          {/* Filter tags - hiển thị các bộ lọc đang áp dụng */}
-          <div className="flex flex-wrap gap-2 mt-3">
-            {sortOption !== 'default' && (
-              <div className="px-3 py-1 rounded-full bg-accent/20 text-xs flex items-center">
-                <span className="mr-2">
-                  {sortOption === 'newest' ? 'Mới Nhất' : 
-                   sortOption === 'popular' ? 'Phổ Biến Nhất' : 
-                   sortOption === 'priceHighToLow' ? 'Giá: Cao đến Thấp' :
-                   'Giá: Thấp đến Cao'}
-                </span>
-                <button onClick={() => handleSortChange('default')}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            )}
-            
-            {searchTerm.trim() && (
-              <div className="px-3 py-1 rounded-full bg-accent/20 text-xs flex items-center">
-                <span className="mr-2">Tìm kiếm: {searchTerm}</span>
-                <button onClick={() => {
-                  setSearchTerm('');
-                  // Xử lý tương tự như handleSearch nhưng với searchTerm rỗng
-                  let filtered = products;
-                  if (activeCategory !== 'all') {
-                    filtered = filtered.filter(product => product.category === activeCategory);
-                  }
-                  filtered = sortProducts(filtered, sortOption);
-                  setFilteredProducts(filtered);
-                  
-                  const newTotalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-                  setTotalPages(newTotalPages);
-                  
-                  if (currentPage > newTotalPages) {
-                    setCurrentPage(1);
-                    setDisplayedProducts(filtered.slice(0, ITEMS_PER_PAGE));
-                  } else {
-                    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-                    const endIndex = startIndex + ITEMS_PER_PAGE;
-                    setDisplayedProducts(filtered.slice(startIndex, endIndex));
-                  }
-                }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            )}
-            
-            {/* Nút xóa tất cả bộ lọc */}
-            {(sortOption !== 'default' || searchTerm.trim()) && (
-              <button
-                onClick={() => {
-                  setSortOption('default');
-                  setSearchTerm('');
-                  
-                  // Reset về trạng thái ban đầu nhưng giữ danh mục hiện tại
-                  let resetFiltered = products;
-                  if (activeCategory !== 'all') {
-                    resetFiltered = resetFiltered.filter(product => product.category === activeCategory);
-                  }
-                  
-                  setFilteredProducts(resetFiltered);
-                  
-                  // Tính toán tổng số trang mới
-                  const newTotalPages = Math.ceil(resetFiltered.length / ITEMS_PER_PAGE);
-                  setTotalPages(newTotalPages);
-                  
-                  // Chỉ về trang 1 nếu trang hiện tại > tổng số trang mới
-                  if (currentPage > newTotalPages) {
-                    setCurrentPage(1);
-                    setDisplayedProducts(resetFiltered.slice(0, ITEMS_PER_PAGE));
-                  } else {
-                    // Giữ nguyên trang hiện tại
-                    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-                    const endIndex = startIndex + ITEMS_PER_PAGE;
-                    setDisplayedProducts(resetFiltered.slice(startIndex, endIndex));
-                  }
-                }}
-                className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs"
-              >
-                Đặt lại bộ lọc
-              </button>
-            )}
+        {/* Search Bar */}
+        <div className="mb-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <Input
+              type="text"
+              placeholder="Tìm kiếm sản phẩm..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
         </div>
         
-        {/* Products Display */}
+        {/* Sort Options */}
+        <div className="mb-4">
+          <Select value={sortOption} onValueChange={setSortOption}>
+            <SelectTrigger>
+              <SelectValue placeholder="Sắp xếp theo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Mặc định</SelectItem>
+              <SelectItem value="newest">Mới nhất</SelectItem>
+              <SelectItem value="price-low">Giá thấp đến cao</SelectItem>
+              <SelectItem value="price-high">Giá cao đến thấp</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      
+      {/* Products Grid */}
+      <div>
         {isLoading ? (
-          <div className="h-96 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin" />
           </div>
-        ) : filteredProducts.length > 0 ? (
-          <div>
-            <ProductGrid 
-              products={displayedProducts} 
-              pagination={{
-                currentPage,
-                totalPages,
-                onPageChange: handlePageChange
-              }}
-            />
-            <div className="text-center mt-4 text-sm text-muted-foreground">
-              Showing {Math.min(filteredProducts.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} to {Math.min(filteredProducts.length, currentPage * ITEMS_PER_PAGE)} of {filteredProducts.length} products
-            </div>
+        ) : paginatedProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {paginatedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-            <h3 className="text-xl font-medium mb-2">Không tìm thấy sản phẩm</h3>
-            <p className="text-muted-foreground">Hãy điều chỉnh bộ lọc hoặc chọn danh mục khác</p>
+          <div className="text-center py-12">
+            <p className="text-lg text-gray-500">Không tìm thấy sản phẩm phù hợp</p>
             <Button 
               variant="outline" 
               className="mt-4"
               onClick={() => {
-                setSortOption('default');
                 setSearchTerm('');
-                loadProducts(activeCategory, false);
+                setSortOption('default');
+                setActiveCategory('all');
+                navigate('/products', { replace: true });
               }}
             >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Tải Lại Sản Phẩm
+              Xóa bộ lọc
             </Button>
           </div>
         )}
       </div>
+      
+      {/* Pagination */}
+      {totalPages > 1 && paginationComponent}
     </div>
   );
 };

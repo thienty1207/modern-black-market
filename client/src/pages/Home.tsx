@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import Hero from '@/components/Hero';
 import FeaturedCategory from '@/components/FeaturedCategory';
 import ProductGrid from '@/components/ProductGrid';
-import { getFeaturedProducts, Product, formatCurrency } from '@/services/productService';
+import { useFeaturedProducts, Product, formatCurrency } from '@/services/productService';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight, AlertCircle } from 'lucide-react';
+import { ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import ProductCard from '@/components/ProductCard';
 import { type CarouselApi } from '@/components/ui/carousel';
 import { cn } from '@/lib/utils';
-import { handleAsyncError, showErrorToast, showSuccessToast, AppError } from '@/utils/errorHandler';
+import { showErrorToast, showSuccessToast } from '@/utils/errorHandler';
 
 // Thêm dữ liệu sản phẩm mẫu để hiển thị đầy đủ
 const sampleProducts: Product[] = [
@@ -139,10 +139,15 @@ const sampleProducts: Product[] = [
 ];
 
 const Home = () => {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [error, setError] = useState<string | null>(null);
+  
+  // Sử dụng React Query hook thay vì useState và useEffect
+  const { 
+    data: featuredProducts = [], 
+    isLoading, 
+    error, 
+    refetch 
+  } = useFeaturedProducts();
 
   // Function to manually control slides
   const handleNext = useCallback(() => {
@@ -155,53 +160,13 @@ const Home = () => {
     carouselApi.scrollPrev();
   }, [carouselApi]);
 
-  // Function to load products
-  const loadProducts = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Thử tải sản phẩm từ service
-      const products = await getFeaturedProducts();
-      
-      // Nếu trả về ít hơn 6 sản phẩm, bổ sung bằng sản phẩm mẫu
-      if (products.length < 6) {
-        const combinedProducts = [...products];
-        
-        // Đảm bảo không trùng ID với sản phẩm hiện có
-        const existingIds = new Set(products.map(p => p.id));
-        const filteredSamples = sampleProducts.filter(p => !existingIds.has(p.id));
-        
-        // Thêm vào đủ 6-8 sản phẩm
-        const neededSamples = Math.max(0, 8 - combinedProducts.length);
-        combinedProducts.push(...filteredSamples.slice(0, neededSamples));
-        
-        setFeaturedProducts(combinedProducts);
-      } else {
-        setFeaturedProducts(products);
-      }
-    } catch (error) {
-      console.error('Failed to load featured products:', error);
-      
-      // Xử lý lỗi với errorHandler
-      const errorMessage = error instanceof Error ? error.message : 'Không thể tải sản phẩm.';
-      setError(errorMessage);
-      showErrorToast(error, 'Lỗi tải sản phẩm');
-      
-      // Sử dụng dữ liệu mẫu khi gặp lỗi
-      setFeaturedProducts(sampleProducts);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // Load products on component mount
-  useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+  // Chỉ sử dụng sampleProducts khi không có dữ liệu từ API
+  const displayProducts = featuredProducts.length > 0 
+    ? featuredProducts 
+    : sampleProducts;
 
   const retryLoading = () => {
-    loadProducts();
+    refetch();
     showSuccessToast('Đang tải lại dữ liệu', 'Thử lại');
   };
 
@@ -305,7 +270,7 @@ const Home = () => {
             opacity: { duration: 0.8 },
             background: { duration: 8, repeat: Infinity, repeatType: "reverse" }
           }}
-          viewport={{ once: false, margin: "-100px" }}
+          viewport={{ once: true, margin: "-100px" }}
         />
         
         {/* Animated light ray */}
@@ -314,7 +279,7 @@ const Home = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
         >
           <motion.div
             className="absolute h-[300%] w-[100px] bg-gradient-to-b from-transparent via-accent/10 to-transparent -rotate-45"
@@ -341,13 +306,13 @@ const Home = () => {
               damping: 15,
               duration: 0.8
             }}
-            viewport={{ once: false, margin: "-150px" }}
+            viewport={{ once: true, margin: "-150px" }}
           >
             <motion.div
               className="inline-block px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md border border-accent/20 mb-4"
               initial={{ opacity: 0, scale: 0 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ 
                 duration: 0.5,
                 type: "spring",
@@ -373,7 +338,7 @@ const Home = () => {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               animate={{
                 backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 transition: {
@@ -390,7 +355,7 @@ const Home = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
             >
               Khám phá bộ sưu tập sản phẩm công nghệ cao cấp, được chế tác tỉ mỉ và thiết kế đỉnh cao.
             </motion.p>
@@ -404,7 +369,7 @@ const Home = () => {
             <div className="h-96 flex flex-col items-center justify-center text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Đã xảy ra lỗi</h3>
-              <p className="text-muted-foreground mb-4 max-w-md">{error}</p>
+              <p className="text-muted-foreground mb-4 max-w-md">{error.message}</p>
               <Button 
                 variant="outline" 
                 onClick={retryLoading}
@@ -419,7 +384,7 @@ const Home = () => {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                viewport={{ once: false, margin: "-100px" }}
+                viewport={{ once: true, margin: "-100px" }}
                 className="flex justify-center w-full"
               >
                 <motion.div 
@@ -433,14 +398,14 @@ const Home = () => {
                     duration: 0.8,
                     delay: 0.3
                   }}
-                  viewport={{ once: false, amount: 0.3 }}
+                  viewport={{ once: true, amount: 0.3 }}
                 >
                   {/* Decorative elements */}
                   <motion.div 
                     className="absolute -top-20 -left-20 w-60 h-60 bg-accent/5 rounded-full blur-3xl"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: false }}
+                    viewport={{ once: true }}
                     animate={{ 
                       scale: [1, 1.2, 1],
                       opacity: [0.3, 0.6, 0.3]
@@ -458,7 +423,7 @@ const Home = () => {
                     className="absolute -bottom-20 -right-20 w-80 h-80 bg-accent/10 rounded-full blur-3xl"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: false }}
+                    viewport={{ once: true }}
                     animate={{ 
                       scale: [1, 1.3, 1],
                       opacity: [0.3, 0.7, 0.3]
@@ -479,7 +444,7 @@ const Home = () => {
                       className="absolute inset-0 z-0"
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
-                      viewport={{ once: false }}
+                      viewport={{ once: true }}
                       animate={{
                         background: [
                           "linear-gradient(45deg, rgba(0,0,0,0) 0%, rgba(180, 132, 253,0.05) 50%, rgba(0,0,0,0) 100%)",
@@ -511,7 +476,7 @@ const Home = () => {
                       }}
                     >
                       <CarouselContent className="-ml-2 md:-ml-4 p-2">
-                        {featuredProducts.map((product, index) => (
+                        {displayProducts.map((product, index) => (
                           <CarouselItem 
                             key={product.id} 
                             className="pl-4 pr-4 pt-4 pb-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3 xl:basis-1/4"
@@ -534,7 +499,7 @@ const Home = () => {
                                   delay: index * 0.1
                                 }
                               }}
-                              viewport={{ once: false, margin: "-50px" }}
+                              viewport={{ once: true, margin: "-50px" }}
                               animate={{ 
                                 opacity: 1,
                                 boxShadow: [
@@ -616,7 +581,7 @@ const Home = () => {
                     className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex gap-1 items-center"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
-                    viewport={{ once: false }}
+                    viewport={{ once: true }}
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ 
                       opacity: { duration: 0.5 },
@@ -649,7 +614,7 @@ const Home = () => {
                       stiffness: 100,
                       damping: 15
                     }}
-                    viewport={{ once: false }}
+                    viewport={{ once: true }}
                   >
                     <motion.div
                       whileHover={{ scale: 1.1 }}
@@ -726,12 +691,12 @@ const Home = () => {
                   type: "spring", 
                   stiffness: 100 
                 }}
-                viewport={{ once: false, margin: "-50px" }}
+                viewport={{ once: true, margin: "-50px" }}
               >
                 <motion.div
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  viewport={{ once: false }}
+                  viewport={{ once: true }}
                   animate={{ 
                     scale: [1, 1.05, 1],
                     boxShadow: [
@@ -884,7 +849,7 @@ const Home = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
         >
           <motion.div
             className="absolute h-[300%] w-[100px] bg-gradient-to-b from-transparent via-accent/10 to-transparent -rotate-45"
@@ -910,7 +875,7 @@ const Home = () => {
               duration: 0.8
             }
           }}
-          viewport={{ once: false, margin: "-100px" }}
+          viewport={{ once: true, margin: "-100px" }}
         >
           <motion.h2 
             className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gradient mb-6"
@@ -923,7 +888,7 @@ const Home = () => {
                 delay: 0.1
               }
             }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: true, amount: 0.6 }}
             animate={{
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
             }}
@@ -947,7 +912,7 @@ const Home = () => {
                 delay: 0.2
               }
             }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: true, amount: 0.6 }}
           >
             Tham gia cùng hàng nghìn khách hàng hài lòng đã nâng cao trải nghiệm kỹ thuật số với bộ sưu tập sản phẩm công nghệ cao cấp của chúng tôi.
           </motion.p>
@@ -962,7 +927,7 @@ const Home = () => {
                 delay: 0.3
               }
             }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: true, amount: 0.6 }}
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 15 }}
           >

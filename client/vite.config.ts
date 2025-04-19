@@ -8,6 +8,14 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // proxy: { // Tạm thời vô hiệu hóa proxy
+    //   // Proxy API requests to backend server
+    //   '/api': {
+    //     target: 'http://localhost:8000', // URL của backend FastAPI
+    //     changeOrigin: true, // Cần thiết cho virtual hosted sites
+    //     secure: false,      // Nếu backend chạy trên http
+    //   }
+    // }
   },
   plugins: [
     react(),

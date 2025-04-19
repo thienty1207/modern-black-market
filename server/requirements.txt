@@ -1,0 +1,60 @@
+# FastAPI core và dependencies
+fastapi
+uvicorn[standard]
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+pydantic
+pydantic-settings
+email-validator
+
+# Database
+sqlmodel
+sqlalchemy
+alembic
+asyncpg
+psycopg2-binary
+greenlet
+
+# Environment variables
+python-dotenv
+
+# CORS middleware
+starlette
+
+# Authentication & Security
+httpx
+itsdangerous
+
+# Testing tools
+pytest
+pytest-asyncio
+
+# Task queue (tùy chọn)
+celery
+redis
+
+# Utilities
+pytz
+tenacity
+orjson
+ujson
+
+# Logging
+loguru
+
+# OpenAPI & Documentation
+swagger-ui-bundle
+
+# File handling
+python-magic
+aiofiles
+
+# Linting & Code Quality
+black
+isort
+flake8
+mypy
+
+# Development tools
+pre-commit
